@@ -16,7 +16,7 @@ type Config struct {
 	Interval   int
 	Timeout    int
 	Cooldown   int
-	StatusPort int `toml:status_port`
+	StatusPort int `toml:"status_port"`
 }
 
 func LoadConfig(flags *Flags) (config *Config, err error) {
