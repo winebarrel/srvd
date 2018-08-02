@@ -1,4 +1,4 @@
-srvd (0.1.0) unstable; urgency=low
+srvd (0.1.1) unstable; urgency=low
 
   * Add existence check of config file.
 
