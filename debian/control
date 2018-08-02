@@ -1,0 +1,13 @@
+Source: srvd
+Priority: optional
+Maintainer: Genki Sugawara <sugawara@winebarrel.jp>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: https://github.com/winebarrel/srvd
+#Vcs-Git: git://git.debian.org/collab-maint/srvd.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/srvd.git;a=summary
+
+Package: srvd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: srvd is a configuration management tool using DNS SRV record like confd.
