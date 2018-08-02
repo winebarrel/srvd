@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/BurntSushi/toml"
 )
@@ -21,6 +22,12 @@ type Config struct {
 
 func LoadConfig(flags *Flags) (config *Config, err error) {
 	config = &Config{}
+
+	if _, e := os.Stat(flags.Config); os.IsNotExist(e) {
+		err = fmt.Errorf("Config file not found: %s", flags.Config)
+		return
+	}
+
 	_, err = toml.DecodeFile(flags.Config, config)
 
 	if config.Src == "" {
