@@ -53,3 +53,4 @@ deb/docker: install-dep dep-ensure
 	apt-get install -y debhelper
 	dpkg-buildpackage -us -uc
 	mv ../srvd_* pkg/
+	rm pkg/$(PROGRAM)
