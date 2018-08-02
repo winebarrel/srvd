@@ -6,9 +6,21 @@ import (
 )
 
 type Worker struct {
-	Config   *Config
-	StopChan chan bool
-	DoneChan chan error
+	Config     *Config
+	StopChan   chan bool
+	DoneChan   chan error
+	StatusChan chan Status
+}
+
+func NewWorker(config *Config, stopChan chan bool, doneChan chan error, statusChan chan Status) (worker *Worker) {
+	worker = &Worker{
+		Config:     config,
+		StopChan:   stopChan,
+		DoneChan:   doneChan,
+		StatusChan: statusChan,
+	}
+
+	return
 }
 
 func (worker *Worker) Run() {
@@ -22,7 +34,8 @@ func (worker *Worker) Run() {
 		return
 	}
 
-	tmpl, err := NewTemplate(worker.Config)
+	status := Status{}
+	tmpl, err := NewTemplate(worker.Config, &status)
 
 	if err != nil {
 		worker.DoneChan <- fmt.Errorf("Template struct creation failed: %s", err)
@@ -45,9 +58,12 @@ func (worker *Worker) Run() {
 
 				if updated {
 					updatedAt = now
+					status.LastUpdate = updatedAt
 				}
 			}
 		}
+
+		worker.StatusChan <- status
 
 		select {
 		case <-worker.StopChan:

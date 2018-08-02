@@ -15,7 +15,8 @@ type Config struct {
 	CheckCmd   string `toml:"check_cmd"`
 	Interval   int
 	Timeout    int
-	Cooldown   int // FIXME:
+	Cooldown   int
+	StatusPort int `toml:status_port`
 }
 
 func LoadConfig(flags *Flags) (config *Config, err error) {
@@ -54,6 +55,13 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 
 	if config.Timeout < 1 {
 		err = fmt.Errorf("interval mult be '>= 1'")
+		return
+	}
+
+	if config.StatusPort == 0 {
+		config.StatusPort = 8080
+	} else if config.StatusPort < 0 || config.StatusPort > 65535 {
+		err = fmt.Errorf("status_port mult be '>= 0' && '<= 65535'")
 		return
 	}
 

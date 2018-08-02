@@ -21,6 +21,7 @@ interval = 1
 timeout = 3
 #resolv_conf = "/etc/resolv.conf"
 cooldown = 60
+#status_port = 8080
 ```
 
 ## Template example
@@ -32,4 +33,11 @@ backend nodes
   {{ range .srvs }}
   server {{ .Target }} {{ .Target }}:{{ .Port }}
   {{ end }}
+```
+
+## Check status
+
+```sh
+$ curl localhost:8080/status
+{"LastUpdate":"2018-08-02T23:38:25.647297201+09:00","Ok":true}
 ```

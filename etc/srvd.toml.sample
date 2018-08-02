@@ -7,3 +7,4 @@ interval = 1
 timeout = 3
 #resolv_conf = "/etc/resolv.conf"
 cooldown = 60
+#status_port = 8080

@@ -21,9 +21,10 @@ type Template struct {
 	DestGid   int
 	CheckCmd  *Command
 	ReloadCmd *Command
+	Status    *Status
 }
 
-func NewTemplate(config *Config) (tmpl *Template, err error) {
+func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 	tmpl = &Template{
 		Src:       config.Src,
 		Dest:      config.Dest,
@@ -31,6 +32,7 @@ func NewTemplate(config *Config) (tmpl *Template, err error) {
 		DestUid:   os.Getuid(),
 		DestGid:   os.Getgid(),
 		ReloadCmd: NewCommand(config.ReloadCmd, config.Timeout),
+		Status:    status,
 	}
 
 	if config.CheckCmd != "" {
@@ -125,6 +127,7 @@ func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
 	buf, err := tmpl.evalute(srvs)
 
 	if err != nil {
+		tmpl.Status.Ok = false
 		log.Println("ERROR: Template evaluating failed:", err)
 		return
 	}
@@ -132,6 +135,7 @@ func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
 	tempPath, err := tmpl.createTempDest(buf)
 
 	if err != nil {
+		tmpl.Status.Ok = false
 		log.Println("ERROR: Temporary dest file creation failed:", err)
 		return
 	}
@@ -143,6 +147,7 @@ func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
 		err = tmpl.update(tempPath)
 
 		if err != nil {
+			tmpl.Status.Ok = false
 			log.Println("ERROR: Temporary dest file creation failed:", err)
 			return
 		}
@@ -150,5 +155,6 @@ func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
 		updated = true
 	}
 
+	tmpl.Status.Ok = true
 	return
 }
