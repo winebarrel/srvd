@@ -48,7 +48,7 @@ deb:
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker clean-vendor
 
 .PHONY: deb/docker
-deb/docker: clean install-dep dep-ensure
+deb/docker: install-dep dep-ensure
 	apt-get update
 	apt-get install -y debhelper
 	dpkg-buildpackage -us -uc
