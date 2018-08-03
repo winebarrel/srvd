@@ -1,3 +1,9 @@
+srvd (0.1.6) unstable; urgency=low
+
+  * Fix DNS record not found error.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 16:17:06 +0900
+
 srvd (0.1.5) unstable; urgency=low
 
   * Fix error message.
