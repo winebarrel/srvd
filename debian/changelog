@@ -1,8 +1,15 @@
+srvd (0.1.2) unstable; urgency=low
+
+  * Add dest file backing up.
+  * Fix LoadConfig() bug.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 09:58:01 +0900
+
 srvd (0.1.1) unstable; urgency=low
 
   * Add existence check of config file.
 
- -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 01:15:39 +0900"
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 01:15:39 +0900
 
 srvd (0.1.0) unstable; urgency=low
 
