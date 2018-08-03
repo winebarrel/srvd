@@ -50,7 +50,7 @@ func (worker *Worker) Run() {
 	for {
 		srvs := dnsCli.Dig()
 
-		if srvs != nil && len(srvs) > 1 {
+		if srvs != nil && len(srvs) > 0 {
 			now := time.Now()
 
 			if updatedAt.Add(cooldown).Before(now) {
