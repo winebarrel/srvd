@@ -1,3 +1,9 @@
+srvd (0.1.5) unstable; urgency=low
+
+  * Fix error message.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 16:11:03 +0900
+
 srvd (0.1.4) unstable; urgency=low
 
   * Fix DNS error handling.
