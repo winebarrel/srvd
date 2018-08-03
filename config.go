@@ -47,7 +47,6 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 
 	if config.ResolvConf == "" {
 		config.ResolvConf = "/etc/resolv.conf"
-		return
 	}
 
 	if config.ReloadCmd == "" {
