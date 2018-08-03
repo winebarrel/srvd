@@ -23,7 +23,7 @@ func Md5(path string) string {
 	_, err = io.Copy(h, f)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("FATAL: %s", err)
 	}
 
 	return hex.EncodeToString(h.Sum(nil))

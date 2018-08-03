@@ -52,7 +52,7 @@ func (worker *Worker) Run() {
 		srvs, err := dnsCli.Dig()
 
 		if err != nil {
-			log.Println("DNS request failed:", err)
+			log.Println("ERROR: DNS request failed:", err)
 			status.Ok = false
 		} else if srvs != nil && len(srvs) > 0 {
 			now := time.Now()
@@ -66,7 +66,7 @@ func (worker *Worker) Run() {
 				}
 			}
 		} else {
-			log.Fatalf("Invalid DNS records detected: %v", srvs)
+			log.Fatalf("FATAL: Invalid DNS records detected: %v", srvs)
 		}
 
 		worker.StatusChan <- status
