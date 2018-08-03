@@ -1,3 +1,9 @@
+srvd (0.1.3) unstable; urgency=low
+
+  * Fix worker bug.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Fri, 03 Aug 2018 10:15:27 +0900
+
 srvd (0.1.2) unstable; urgency=low
 
   * Add dest file backing up.
