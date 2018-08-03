@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"sort"
@@ -29,14 +30,14 @@ func NewDnsClient(config *Config) (dnsCli *DnsClient, err error) {
 	return
 }
 
-func (dnsCli *DnsClient) Dig() (srvs []*dns.SRV) {
+func (dnsCli *DnsClient) Dig() (srvs []*dns.SRV, err error) {
 	for _, server := range dnsCli.ClientConfig.Servers {
 		hostPort := net.JoinHostPort(server, dnsCli.ClientConfig.Port)
-		var err error
-		r, _, err := dnsCli.Client.Exchange(dnsCli.Message, hostPort)
+		var r *dns.Msg
+		r, _, err = dnsCli.Client.Exchange(dnsCli.Message, hostPort)
 
 		if err != nil {
-			log.Println("ERROR: DNS lookup failed: ", err)
+			log.Println("WARNING: DNS lookup failed: ", err)
 		} else if r != nil {
 			srvs = make([]*dns.SRV, len(r.Answer))
 
@@ -52,6 +53,9 @@ func (dnsCli *DnsClient) Dig() (srvs []*dns.SRV) {
 		}
 	}
 
-	log.Println("ERROR: DNS record not found")
+	if err == nil {
+		err = fmt.Errorf("DNS record not found")
+	}
+
 	return
 }

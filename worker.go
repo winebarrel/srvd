@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -48,9 +49,12 @@ func (worker *Worker) Run() {
 	updatedAt := time.Now().Add(-cooldown)
 
 	for {
-		srvs := dnsCli.Dig()
+		srvs, err := dnsCli.Dig()
 
-		if srvs != nil && len(srvs) > 0 {
+		if err != nil {
+			log.Println("DNS request failed:", err)
+			status.Ok = false
+		} else if srvs != nil && len(srvs) > 0 {
 			now := time.Now()
 
 			if updatedAt.Add(cooldown).Before(now) {
@@ -61,6 +65,8 @@ func (worker *Worker) Run() {
 					status.LastUpdate = updatedAt
 				}
 			}
+		} else {
+			log.Fatalf("Invalid DNS records detected: %v", srvs)
 		}
 
 		worker.StatusChan <- status
