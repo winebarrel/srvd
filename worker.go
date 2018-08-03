@@ -66,7 +66,8 @@ func (worker *Worker) Run() {
 				}
 			}
 		} else {
-			log.Fatalf("FATAL: Invalid DNS records detected: %v", srvs)
+			log.Println("ERROR: DNS record not found")
+			status.Ok = false
 		}
 
 		worker.StatusChan <- status
