@@ -23,5 +23,5 @@ backend nodes
   mode tcp
   # see https://godoc.org/github.com/miekg/dns#SRV
   {{ range .srvs }}
-  server {{ .Target }} {{ .Target }}:{{ .Port }}
+  server {{ .Target }} {{ .Target }}:{{ .Port }} check
   {{ end }}
