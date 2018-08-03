@@ -106,6 +106,19 @@ func (tmpl *Template) update(tempPath string) (err error) {
 		}
 	}
 
+	var destBak string
+
+	if _, e := os.Stat(tmpl.Dest); !os.IsNotExist(e) {
+		destBak = tmpl.Dest + ".bak"
+		err = Copy(tmpl.Dest, destBak)
+
+		if err != nil {
+			return
+		}
+
+		defer os.Remove(destBak)
+	}
+
 	err = os.Rename(tempPath, tmpl.Dest)
 
 	if err != nil {
@@ -117,6 +130,13 @@ func (tmpl *Template) update(tempPath string) (err error) {
 
 	if err != nil {
 		err = fmt.Errorf("Reload command failed: %s", err)
+
+		if destBak == "" {
+			os.Remove(tmpl.Dest)
+		} else {
+			os.Rename(destBak, tmpl.Dest)
+		}
+
 		return
 	}
 
@@ -148,7 +168,7 @@ func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
 
 		if err != nil {
 			tmpl.Status.Ok = false
-			log.Println("ERROR: Temporary dest file creation failed:", err)
+			log.Println("ERROR: The configuration updating failed:", err)
 			return
 		}
 

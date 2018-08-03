@@ -15,8 +15,8 @@ srvd -config srvd.toml
 src = "/etc/haproxy/haproxy.cfg.tmpl"
 dest = "/etc/haproxy/haproxy.cfg"
 domain = "_http._tcp.example.com"
-reload_cmd = "/usr/local/sbin/haproxy -c -V -f {{ .src }}"
-check_cmd = "/bin/systemctl reload haproxy.service"
+reload_cmd = "/bin/systemctl reload haproxy.service"
+check_cmd = "/usr/sbin/haproxy -c -V -f {{ .src }}"
 interval = 1
 timeout = 3
 #resolv_conf = "/etc/resolv.conf"
