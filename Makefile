@@ -1,9 +1,10 @@
-SHELL   := /bin/bash
-PROGRAM := srvd
-VERSION := v0.1.6
-GOOS    := $(shell go env GOOS)
-GOARCH  := $(shell go env GOARCH)
-SRC     := $(wildcard **/*.go)
+SHELL    := /bin/bash
+PROGRAM  := srvd
+VERSION  := v0.1.6
+GOOS     := $(shell go env GOOS)
+GOARCH   := $(shell go env GOARCH)
+TEST_SRC := $(wildcard **/*_test.go) $(wildcard **/test_*.go)
+SRC      := $(filter-out $(TEST_SRC),$(wildcard **/*.go))
 
 .PHONY: all
 all: $(PROGRAM)
@@ -12,13 +13,17 @@ all: $(PROGRAM)
 dep-ensure: clean-vendor
 	dep ensure
 
-$(PROGRAM): $(SRC)
+$(PROGRAM): $(SRC) test
 ifeq ($(GOOS),linux)
 	CGO_ENABLED=0 go build -ldflags "-X main.version=$(VERSION)" -a -tags netgo -installsuffix netgo -o pkg/$(PROGRAM)
 	[[ "`ldd pkg/$(PROGRAM)`" =~ "not a dynamic executable" ]] || exit 1
 else
 	CGO_ENABLED=0 go build -ldflags "-X main.version=$(VERSION)" -o pkg/$(PROGRAM)
 endif
+
+.PHONY: test
+test: $(TEST_SRC)
+	go test -v $(TEST_SRC)
 
 .PHONY: clean
 clean:
