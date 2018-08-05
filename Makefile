@@ -3,8 +3,8 @@ PROGRAM  := srvd
 VERSION  := v0.1.6
 GOOS     := $(shell go env GOOS)
 GOARCH   := $(shell go env GOARCH)
-TEST_SRC := $(wildcard **/*_test.go) $(wildcard **/test_*.go)
-SRC      := $(filter-out $(TEST_SRC),$(wildcard **/*.go))
+TEST_SRC := $(wildcard *_test.go) $(wildcard test_*.go)
+SRC      := $(filter-out $(TEST_SRC),$(wildcard *.go))
 
 .PHONY: all
 all: $(PROGRAM)
@@ -23,7 +23,7 @@ endif
 
 .PHONY: test
 test: $(TEST_SRC)
-	go test -v $(TEST_SRC)
+	go test -v -gcflags '-N -l'
 
 .PHONY: clean
 clean:

@@ -32,6 +32,7 @@ func main() {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
+LOOP:
 	for {
 		select {
 		case s := <-signalChan:
@@ -43,7 +44,7 @@ func main() {
 				log.Fatalf("FATAL: Processing failed: %s", e)
 			} else {
 				log.Printf("Exited")
-				os.Exit(0)
+				break LOOP
 			}
 		}
 	}
