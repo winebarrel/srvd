@@ -55,7 +55,7 @@ func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 	return
 }
 
-func (tmpl *Template) evalute(srvs []*dns.SRV) (buf bytes.Buffer, err error) {
+func (tmpl *Template) evalute(srvs []*dns.SRV) (pbuf *bytes.Buffer, err error) {
 	input, err := ioutil.ReadFile(tmpl.Src)
 
 	if err != nil {
@@ -66,11 +66,17 @@ func (tmpl *Template) evalute(srvs []*dns.SRV) (buf bytes.Buffer, err error) {
 		"srvs": srvs,
 	}
 	name := filepath.Base(tmpl.Src)
-	buf, err = sigil.Execute(input, vars, name)
+	buf, err := sigil.Execute(input, vars, name)
+
+	if err != nil {
+		return
+	}
+
+	pbuf = &buf
 	return
 }
 
-func (tmpl *Template) createTempDest(buf bytes.Buffer) (tempPath string, err error) {
+func (tmpl *Template) createTempDest(buf *bytes.Buffer) (tempPath string, err error) {
 	destTemp, err := ioutil.TempFile(filepath.Dir(tmpl.Dest), "."+filepath.Base(tmpl.Dest))
 
 	if err != nil {
