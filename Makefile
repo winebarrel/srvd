@@ -23,7 +23,7 @@ endif
 
 .PHONY: test
 test: $(TEST_SRC)
-	go test $(TEST_SRC)
+	go test -v $(TEST_SRC)
 
 .PHONY: clean
 clean:
