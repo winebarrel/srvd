@@ -1,6 +1,6 @@
 SHELL    := /bin/bash
 PROGRAM  := srvd
-VERSION  := v0.1.6
+VERSION  := v0.1.7
 GOOS     := $(shell go env GOOS)
 GOARCH   := $(shell go env GOARCH)
 TEST_SRC := $(wildcard *_test.go) $(wildcard test_*.go)
