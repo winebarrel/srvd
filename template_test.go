@@ -209,3 +209,31 @@ func TestTemplateProcessNotChanged(t *testing.T) {
 		})
 	})
 }
+
+func TestTemplateProcessUpdateFailed(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+		DestUid:  os.Getuid(),
+		DestGid:  os.Getgid(),
+		DestMode: 0644,
+		Status:   &Status{},
+	}
+
+	srvs := []*dns.SRV{
+		&dns.SRV{Target: "server.example.com."},
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+			tmpl.Dest = dest.Name()
+			tmpl.Src = src.Name()
+			updated := tmpl.Process(srvs)
+			assert.Equal(false, updated)
+			assert.Equal(false, tmpl.Status.Ok)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server0.example.com.", string(buf))
+		})
+	})
+}
