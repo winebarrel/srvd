@@ -134,3 +134,32 @@ func TestTemplateUpdateReloadFailed(t *testing.T) {
 		})
 	})
 }
+
+func TestTemplateProcess(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		DestUid:   os.Getuid(),
+		DestGid:   os.Getgid(),
+		DestMode:  0644,
+		Status:    &Status{},
+	}
+
+	srvs := []*dns.SRV{
+		&dns.SRV{Target: "server.example.com."},
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+			tmpl.Dest = dest.Name()
+			tmpl.Src = src.Name()
+			updated := tmpl.Process(srvs)
+			assert.Equal(true, updated)
+			assert.Equal(true, tmpl.Status.Ok)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server.example.com.", string(buf))
+		})
+	})
+}
