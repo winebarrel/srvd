@@ -3,6 +3,8 @@ srvd
 
 `srvd` is a configuration management tool using [DNS SRV record](https://en.wikipedia.org/wiki/SRV_record) like [confd](https://github.com/kelseyhightower/confd).
 
+[![Build Status](https://travis-ci.org/winebarrel/srvd.svg?branch=master)](https://travis-ci.org/winebarrel/srvd)
+
 ## Usage
 
 ```sh
