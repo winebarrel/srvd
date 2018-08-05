@@ -5,13 +5,14 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/miekg/dns"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEvalute(t *testing.T) {
+func TestTemplateEvalute(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
@@ -26,7 +27,7 @@ func TestEvalute(t *testing.T) {
 	})
 }
 
-func TestCreateTempDest(t *testing.T) {
+func TestTemplateCreateTempDest(t *testing.T) {
 	assert := assert.New(t)
 
 	tmpl := &Template{
@@ -45,19 +46,19 @@ func TestCreateTempDest(t *testing.T) {
 	})
 }
 
-func TestIsChangedTrue(t *testing.T) {
+func TestTemplateIsChangedTrue(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
-	tempFile("server0.example.com.", func(temp *os.File) {
-		tempFile("server.example.com.", func(dest *os.File) {
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			assert.Equal(true, tmpl.isChanged(temp.Name()))
 		})
 	})
 }
 
-func TestIsChangedFalse(t *testing.T) {
+func TestTemplateIsChangedFalse(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
@@ -69,11 +70,67 @@ func TestIsChangedFalse(t *testing.T) {
 	})
 }
 
-func TestIsChangedDestNotExists(t *testing.T) {
+func TestTemplateIsChangedDestNotExists(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{Dest: "not_exists"}
 
 	tempFile("server.example.com.", func(temp *os.File) {
 		assert.Equal(true, tmpl.isChanged(temp.Name()))
+	})
+}
+
+func TestTemplateUpdate(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal(nil, err)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server.example.com.", string(buf))
+		})
+	})
+}
+
+func TestTemplateUpdateCheckFailed(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal("Check command failed: exit status 1", err.Error())
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server0.example.com.", string(buf))
+		})
+	})
+}
+
+func TestTemplateUpdateReloadFailed(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal("Reload command failed: exit status 1", err.Error())
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server0.example.com.", string(buf))
+		})
 	})
 }
