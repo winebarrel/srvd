@@ -10,3 +10,4 @@ srvd.toml
 /pkg/srvd*
 .DS_Store
 /Gopkg.lock
+/.vscode/
