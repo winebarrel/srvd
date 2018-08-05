@@ -50,7 +50,7 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 	}
 
 	if config.ReloadCmd == "" {
-		err = fmt.Errorf("reload is required")
+		err = fmt.Errorf("reload_cmd is required")
 		return
 	}
 
@@ -60,7 +60,7 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 	}
 
 	if config.Timeout < 1 {
-		err = fmt.Errorf("interval mult be '>= 1'")
+		err = fmt.Errorf("timeout mult be '>= 1'")
 		return
 	}
 
