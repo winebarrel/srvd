@@ -163,3 +163,22 @@ func TestTemplateProcess(t *testing.T) {
 		})
 	})
 }
+
+func TestTemplateProcessEvaluteFailed(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		Status: &Status{},
+	}
+
+	srvs := []*dns.SRV{
+		&dns.SRV{Target: "server.example.com."},
+	}
+
+	tempFile("{{ range .srvs }}{{ .Target }}{{ end", func(src *os.File) {
+		tmpl.Src = src.Name()
+		updated := tmpl.Process(srvs)
+		assert.Equal(false, updated)
+		assert.Equal(false, tmpl.Status.Ok)
+	})
+}
