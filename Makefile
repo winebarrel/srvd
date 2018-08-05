@@ -23,7 +23,7 @@ endif
 
 .PHONY: test
 test: $(TEST_SRC)
-	go test -v $(TEST_SRC)
+	go test $(TEST_SRC)
 
 .PHONY: clean
 clean:
@@ -44,12 +44,12 @@ install-dep:
 
 .PHONY: package/linux
 package/linux: install-dep dep-ensure
-	docker run  -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
+	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) package clean-vendor
 
 .PHONY: deb
 deb:
-	docker run  -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
+	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker clean-vendor
 
 .PHONY: deb/docker
