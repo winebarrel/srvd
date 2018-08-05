@@ -29,13 +29,13 @@ func (httpd *Httpd) updateStatus() {
 	}
 }
 
+func (httpd *Httpd) handler(w http.ResponseWriter, r *http.Request) {
+	status, _ := json.Marshal(*httpd.Status)
+	fmt.Fprintln(w, string(status))
+}
+
 func (httpd *Httpd) Run() {
-	http.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
-		status, _ := json.Marshal(*httpd.Status)
-		fmt.Fprintln(w, string(status))
-	})
-
+	http.HandleFunc("/status", httpd.handler)
 	go httpd.updateStatus()
-
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", httpd.Config.StatusPort), nil))
 }
