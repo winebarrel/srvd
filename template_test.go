@@ -182,3 +182,30 @@ func TestTemplateProcessEvaluteFailed(t *testing.T) {
 		assert.Equal(false, tmpl.Status.Ok)
 	})
 }
+
+func TestTemplateProcessNotChanged(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		DestUid:  os.Getuid(),
+		DestGid:  os.Getgid(),
+		DestMode: 0644,
+		Status:   &Status{},
+	}
+
+	srvs := []*dns.SRV{
+		&dns.SRV{Target: "server.example.com."},
+	}
+
+	tempFile("server.example.com.", func(dest *os.File) {
+		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+			tmpl.Dest = dest.Name()
+			tmpl.Src = src.Name()
+			updated := tmpl.Process(srvs)
+			assert.Equal(false, updated)
+			assert.Equal(true, tmpl.Status.Ok)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server.example.com.", string(buf))
+		})
+	})
+}
