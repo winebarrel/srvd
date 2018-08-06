@@ -10,7 +10,9 @@ import (
 	"syscall"
 
 	"github.com/gliderlabs/sigil"
+	_ "github.com/gliderlabs/sigil/builtin"
 	"github.com/miekg/dns"
+	_ "github.com/winebarrel/srvd/template_funcs"
 )
 
 type Template struct {
