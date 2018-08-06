@@ -10,7 +10,7 @@ import (
 )
 
 func TempFile(content string, callback func(f *os.File)) {
-	tmpfile, _ := ioutil.TempFile("", "fstaid")
+	tmpfile, _ := ioutil.TempFile("", "srvd")
 	defer os.Remove(tmpfile.Name())
 	tmpfile.WriteString(content)
 	tmpfile.Sync()
