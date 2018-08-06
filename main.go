@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	_ "github.com/gliderlabs/sigil/builtin"
 )
 
 func init() {
