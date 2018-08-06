@@ -1,3 +1,9 @@
+srvd (0.2.2) unstable; urgency=low
+
+  * Add template functions.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Mon, 06 Aug 2018 20:54:37 +0900
+
 srvd (0.2.1) unstable; urgency=low
 
   * Add dry run mode.
