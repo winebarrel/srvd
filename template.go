@@ -13,6 +13,7 @@ import (
 	_ "github.com/gliderlabs/sigil/builtin"
 	"github.com/miekg/dns"
 	_ "github.com/winebarrel/srvd/template_funcs"
+	"github.com/winebarrel/srvd/utils"
 )
 
 type Template struct {
@@ -101,8 +102,8 @@ func (tmpl *Template) isChanged(tempPath string) bool {
 		return true
 	}
 
-	destMd5 := Md5(tmpl.Dest)
-	tempMd5 := Md5(tempPath)
+	destMd5 := utils.Md5(tmpl.Dest)
+	tempMd5 := utils.Md5(tempPath)
 	return destMd5 != tempMd5
 }
 
@@ -121,7 +122,7 @@ func (tmpl *Template) update(tempPath string) (err error) {
 
 	if _, e := os.Stat(tmpl.Dest); !os.IsNotExist(e) {
 		destBak = tmpl.Dest + ".bak"
-		err = Copy(tmpl.Dest, destBak)
+		err = utils.Copy(tmpl.Dest, destBak)
 
 		if err != nil {
 			return

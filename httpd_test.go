@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/winebarrel/srvd/testutils"
 )
 
 func TestHttpdNotOK(t *testing.T) {
@@ -17,7 +18,7 @@ func TestHttpdNotOK(t *testing.T) {
 	ts := httptest.NewServer(mtx)
 	defer ts.Close()
 	res, _ := http.Get(ts.URL + "/status")
-	body, code := readResponse(res)
+	body, code := testutils.ReadResponse(res)
 	assert.Equal(200, code)
 	assert.Equal(`{"LastUpdate":"0001-01-01T00:00:00Z","Ok":false}`+"\n", body)
 }
@@ -30,7 +31,7 @@ func TestHttpdOk(t *testing.T) {
 	ts := httptest.NewServer(mtx)
 	defer ts.Close()
 	res, _ := http.Get(ts.URL + "/status")
-	body, code := readResponse(res)
+	body, code := testutils.ReadResponse(res)
 	assert.Equal(200, code)
 	assert.Equal(`{"LastUpdate":"2014-12-31T12:13:24Z","Ok":true}`+"\n", body)
 }

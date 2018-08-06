@@ -1,14 +1,14 @@
 package template_funcs
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"strings"
 	"text/template"
 
-	"github.com/miekg/dns"
-
 	"github.com/gliderlabs/sigil"
+	"github.com/miekg/dns"
 )
 
 func init() {
@@ -43,6 +43,8 @@ func ipv4sByInterface() (ipv4sByIf map[string][]string, err error) {
 		}
 
 		for _, a := range addrs {
+			fmt.Println(a)
+
 			addrStr := a.String()
 
 			if strings.Contains(addrStr, ".") {
@@ -55,7 +57,7 @@ func ipv4sByInterface() (ipv4sByIf map[string][]string, err error) {
 				idx := strings.Index(iprange, "/")
 
 				if idx > -1 {
-					buf[i] = iprange[0 : idx-1]
+					buf[i] = iprange[0:idx]
 				}
 			}
 

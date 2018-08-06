@@ -3,9 +3,9 @@ package main
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/bouk/monkey"
+	"github.com/stretchr/testify/assert"
+	"github.com/winebarrel/srvd/testutils"
 )
 
 func TestMain(t *testing.T) {
@@ -33,7 +33,7 @@ func TestMain(t *testing.T) {
 		worker = &Worker{DoneChan: doneChan}
 		isNewWorkerCalled = true
 
-		patchInstanceMethod(worker, "Run", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(worker, "Run", func(guard **monkey.PatchGuard) interface{} {
 			return func(w *Worker) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
@@ -49,7 +49,7 @@ func TestMain(t *testing.T) {
 		httpd = &Httpd{}
 		isNewHttpdCalled = true
 
-		patchInstanceMethod(httpd, "Run", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(httpd, "Run", func(guard **monkey.PatchGuard) interface{} {
 			return func(_ *Httpd) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()

@@ -3,10 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/bouk/monkey"
 	"github.com/miekg/dns"
+	"github.com/stretchr/testify/assert"
+	"github.com/winebarrel/srvd/testutils"
 )
 
 func TestWorkerUpdated(t *testing.T) {
@@ -26,7 +26,7 @@ func TestWorkerUpdated(t *testing.T) {
 		defer monkey.Unpatch(NewDnsClient)
 		dnsCli = &DnsClient{}
 
-		patchInstanceMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
 			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
@@ -46,7 +46,7 @@ func TestWorkerUpdated(t *testing.T) {
 		defer monkey.Unpatch(NewTemplate)
 		tmpl = &Template{Status: status}
 
-		patchInstanceMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
 			return func(tp *Template, _ map[string][]*dns.SRV) (updated bool) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
@@ -87,7 +87,7 @@ func TestWorkerNonUpdated(t *testing.T) {
 		defer monkey.Unpatch(NewDnsClient)
 		dnsCli = &DnsClient{}
 
-		patchInstanceMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
 			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
@@ -107,7 +107,7 @@ func TestWorkerNonUpdated(t *testing.T) {
 		defer monkey.Unpatch(NewTemplate)
 		tmpl = &Template{Status: status}
 
-		patchInstanceMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
+		testutils.PatchMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
 			return func(tp *Template, _ map[string][]*dns.SRV) (updated bool) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()

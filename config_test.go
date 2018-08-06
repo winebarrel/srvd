@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/winebarrel/srvd/testutils"
 )
 
 func TestLoadConfig(t *testing.T) {
@@ -20,7 +21,7 @@ interval = 1
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		config, err := LoadConfig(flags)
 		assert.Equal(nil, err)
@@ -55,7 +56,7 @@ cooldown = 60
 status_port = 8081
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		config, err := LoadConfig(flags)
 		assert.Equal(nil, err)
@@ -86,7 +87,7 @@ interval = 1
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("src is required", err.Error())
@@ -106,7 +107,7 @@ interval = 1
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("dest is required", err.Error())
@@ -126,7 +127,7 @@ interval = 1
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("domains is required", err.Error())
@@ -146,7 +147,7 @@ interval = 1
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("reload_cmd is required", err.Error())
@@ -166,7 +167,7 @@ reload_cmd = "service reload nginx"
 timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("interval mult be '>= 1'", err.Error())
@@ -186,7 +187,7 @@ interval = 1
 #timeout = 2
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("timeout mult be '>= 1'", err.Error())
@@ -207,7 +208,7 @@ timeout = 2
 status_port = -1
 `
 
-	tempFile(conf, func(f *os.File) {
+	testutils.TempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
 		assert.Equal("status_port mult be '>= 0' && '<= 65535'", err.Error())

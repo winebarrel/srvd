@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/winebarrel/srvd/testutils"
 )
 
 func TestTemplateEvalute(t *testing.T) {
@@ -22,7 +22,7 @@ func TestTemplateEvalute(t *testing.T) {
 
 	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
 
-	tempFile(tmplSrc, func(f *os.File) {
+	testutils.TempFile(tmplSrc, func(f *os.File) {
 		tmpl.Src = f.Name()
 		buf, _ := tmpl.evalute(srvsByDomain)
 		assert.Equal("server.example.com.", buf.String())
@@ -38,7 +38,7 @@ func TestTemplateCreateTempDest(t *testing.T) {
 		DestMode: 0644,
 	}
 
-	tempFile("hello", func(f *os.File) {
+	testutils.TempFile("hello", func(f *os.File) {
 		tmpl.Dest = f.Name()
 		buf := bytes.NewBufferString("server.example.com.")
 		tempPath, _ := tmpl.createTempDest(buf)
@@ -52,8 +52,8 @@ func TestTemplateIsChangedTrue(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			assert.Equal(true, tmpl.isChanged(temp.Name()))
 		})
@@ -64,8 +64,8 @@ func TestTemplateIsChangedFalse(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
-	tempFile("server.example.com.", func(temp *os.File) {
-		tempFile("server.example.com.", func(dest *os.File) {
+	testutils.TempFile("server.example.com.", func(temp *os.File) {
+		testutils.TempFile("server.example.com.", func(dest *os.File) {
 			tmpl.Dest = dest.Name()
 			assert.Equal(false, tmpl.isChanged(temp.Name()))
 		})
@@ -76,7 +76,7 @@ func TestTemplateIsChangedDestNotExists(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{Dest: "not_exists"}
 
-	tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server.example.com.", func(temp *os.File) {
 		assert.Equal(true, tmpl.isChanged(temp.Name()))
 	})
 }
@@ -89,8 +89,8 @@ func TestTemplateUpdate(t *testing.T) {
 		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
 	}
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			err := tmpl.update(temp.Name())
 			assert.Equal(nil, err)
@@ -109,8 +109,8 @@ func TestTemplateUpdateDryrun(t *testing.T) {
 		Dryrun:    true,
 	}
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			err := tmpl.update(temp.Name())
 			assert.Equal(nil, err)
@@ -127,8 +127,8 @@ func TestTemplateUpdateCheckFailed(t *testing.T) {
 		CheckCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
 	}
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			err := tmpl.update(temp.Name())
 			assert.Equal("Check command failed: exit status 1", err.Error())
@@ -146,8 +146,8 @@ func TestTemplateUpdateReloadFailed(t *testing.T) {
 		ReloadCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
 	}
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("server.example.com.", func(temp *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
 			tmpl.Dest = dest.Name()
 			err := tmpl.update(temp.Name())
 			assert.Equal("Reload command failed: exit status 1", err.Error())
@@ -175,8 +175,8 @@ func TestTemplateProcess(t *testing.T) {
 
 	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile(tmplSrc, func(src *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
 			updated := tmpl.Process(srvsByDomain)
@@ -201,7 +201,7 @@ func TestTemplateProcessEvaluteFailed(t *testing.T) {
 
 	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end`
 
-	tempFile(tmplSrc, func(src *os.File) {
+	testutils.TempFile(tmplSrc, func(src *os.File) {
 		tmpl.Src = src.Name()
 		updated := tmpl.Process(srvsByDomain)
 		assert.Equal(false, updated)
@@ -225,8 +225,8 @@ func TestTemplateProcessNotChanged(t *testing.T) {
 
 	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
 
-	tempFile("server.example.com.", func(dest *os.File) {
-		tempFile(tmplSrc, func(src *os.File) {
+	testutils.TempFile("server.example.com.", func(dest *os.File) {
+		testutils.TempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
 			updated := tmpl.Process(srvsByDomain)
@@ -255,8 +255,8 @@ func TestTemplateProcessUpdateFailed(t *testing.T) {
 
 	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
 
-	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile(tmplSrc, func(src *os.File) {
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
 			updated := tmpl.Process(srvsByDomain)
