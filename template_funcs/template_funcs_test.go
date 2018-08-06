@@ -13,7 +13,7 @@ func TestTemplateFuncsIpv4ToI(t *testing.T) {
 	assert.Equal(16909060, i)
 }
 
-func TestRotateSRVs(t *testing.T) {
+func TestTemplateFuncsRotateSRVs(t *testing.T) {
 	assert := assert.New(t)
 
 	ary := []*dns.SRV{
