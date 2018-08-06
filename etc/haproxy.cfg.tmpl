@@ -21,7 +21,8 @@ frontend localnodes
 
 backend nodes
   mode tcp
+  {{ $srvs := index .domains "_mysql._tcp.example.com" }}
   # see https://godoc.org/github.com/miekg/dns#SRV
-  {{ range .srvs }}
+  {{ range $srvs }}
   server {{ .Target }} {{ .Target }}:{{ .Port }} check
   {{ end }}

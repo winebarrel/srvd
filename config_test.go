@@ -14,7 +14,7 @@ func TestLoadConfig(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2
@@ -26,7 +26,7 @@ timeout = 2
 		assert.Equal(nil, err)
 		assert.Equal("src", config.Src)
 		assert.Equal("dest", config.Dest)
-		assert.Equal("_http._tcp.example.com", config.Domain)
+		assert.Equal([]string{"_http._tcp.example.com"}, config.Domains)
 		assert.Equal("/etc/resolv.conf", config.ResolvConf)
 		assert.Equal("service reload nginx", config.ReloadCmd)
 		assert.Equal("", config.CheckCmd)
@@ -44,7 +44,7 @@ func TestLoadConfigWithOptionalConfig(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 resolv_conf = "resolv.conf"
 reload_cmd = "service reload nginx"
 check_cmd = "service configtest nginx"
@@ -60,7 +60,7 @@ status_port = 8081
 		assert.Equal(nil, err)
 		assert.Equal("src", config.Src)
 		assert.Equal("dest", config.Dest)
-		assert.Equal("_http._tcp.example.com", config.Domain)
+		assert.Equal([]string{"_http._tcp.example.com"}, config.Domains)
 		assert.Equal("resolv.conf", config.ResolvConf)
 		assert.Equal("service reload nginx", config.ReloadCmd)
 		assert.Equal("service configtest nginx", config.CheckCmd)
@@ -78,7 +78,7 @@ func TestLoadConfigWithoutSrc(t *testing.T) {
 	conf := `
 #src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2
@@ -98,7 +98,7 @@ func TestLoadConfigWithoutDest(t *testing.T) {
 	conf := `
 src = "src"
 #dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2
@@ -118,7 +118,7 @@ func TestLoadConfigWithoutDomain(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-#domain = "_http._tcp.example.com"
+#domaisn =[ "_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2
@@ -127,7 +127,7 @@ timeout = 2
 	tempFile(conf, func(f *os.File) {
 		flags.Config = f.Name()
 		_, err := LoadConfig(flags)
-		assert.Equal("domain is required", err.Error())
+		assert.Equal("domains is required", err.Error())
 	})
 }
 
@@ -138,7 +138,7 @@ func TestLoadConfigWithoutReoadCmd(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 #reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2
@@ -158,7 +158,7 @@ func TestLoadConfigWithoutInterval(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 #interval = 1
 timeout = 2
@@ -178,7 +178,7 @@ func TestLoadConfigWithoutTimeout(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 #timeout = 2
@@ -198,7 +198,7 @@ func TestLoadConfigWithInvalidStatusPort(t *testing.T) {
 	conf := `
 src = "src"
 dest = "dest"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "service reload nginx"
 interval = 1
 timeout = 2

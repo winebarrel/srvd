@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -49,25 +48,16 @@ func (worker *Worker) Run() {
 	updatedAt := time.Now().Add(-cooldown)
 
 	for {
-		srvs, err := dnsCli.Dig()
+		srvsByDomain := dnsCli.Dig()
+		now := time.Now()
 
-		if err != nil {
-			log.Println("ERROR: DNS request failed:", err)
-			status.Ok = false
-		} else if srvs != nil && len(srvs) > 0 {
-			now := time.Now()
+		if updatedAt.Add(cooldown).Before(now) {
+			updated := tmpl.Process(srvsByDomain)
 
-			if updatedAt.Add(cooldown).Before(now) {
-				updated := tmpl.Process(srvs)
-
-				if updated {
-					updatedAt = now
-					status.LastUpdate = updatedAt
-				}
+			if updated {
+				updatedAt = now
+				status.LastUpdate = updatedAt
 			}
-		} else {
-			log.Println("ERROR: DNS record not found")
-			status.Ok = false
 		}
 
 		worker.StatusChan <- status

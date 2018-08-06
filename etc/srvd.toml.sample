@@ -1,6 +1,6 @@
 src = "/etc/haproxy/haproxy.cfg.tmpl"
 dest = "/etc/haproxy/haproxy.cfg"
-domain = "_mysql._tcp.example.com"
+domains = ["_mysql._tcp.example.com"]
 reload_cmd = "/bin/systemctl reload haproxy.service"
 check_cmd = "/usr/sbin/haproxy -c -V -f {{ .src }}"
 interval = 1

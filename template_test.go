@@ -16,13 +16,15 @@ func TestTemplateEvalute(t *testing.T) {
 	assert := assert.New(t)
 	tmpl := &Template{}
 
-	srvs := []*dns.SRV{
-		&dns.SRV{Target: "server.example.com."},
+	srvsByDomain := map[string][]*dns.SRV{
+		"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
 	}
 
-	tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(f *os.File) {
+	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
+
+	tempFile(tmplSrc, func(f *os.File) {
 		tmpl.Src = f.Name()
-		buf, _ := tmpl.evalute(srvs)
+		buf, _ := tmpl.evalute(srvsByDomain)
 		assert.Equal("server.example.com.", buf.String())
 	})
 }
@@ -147,15 +149,17 @@ func TestTemplateProcess(t *testing.T) {
 		Status:    &Status{},
 	}
 
-	srvs := []*dns.SRV{
-		&dns.SRV{Target: "server.example.com."},
+	srvsByDomain := map[string][]*dns.SRV{
+		"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
 	}
 
+	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
+
 	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+		tempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
-			updated := tmpl.Process(srvs)
+			updated := tmpl.Process(srvsByDomain)
 			assert.Equal(true, updated)
 			assert.Equal(true, tmpl.Status.Ok)
 			buf, _ := ioutil.ReadFile(dest.Name())
@@ -171,13 +175,15 @@ func TestTemplateProcessEvaluteFailed(t *testing.T) {
 		Status: &Status{},
 	}
 
-	srvs := []*dns.SRV{
-		&dns.SRV{Target: "server.example.com."},
+	srvsByDomain := map[string][]*dns.SRV{
+		"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
 	}
 
-	tempFile("{{ range .srvs }}{{ .Target }}{{ end", func(src *os.File) {
+	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end`
+
+	tempFile(tmplSrc, func(src *os.File) {
 		tmpl.Src = src.Name()
-		updated := tmpl.Process(srvs)
+		updated := tmpl.Process(srvsByDomain)
 		assert.Equal(false, updated)
 		assert.Equal(false, tmpl.Status.Ok)
 	})
@@ -193,15 +199,17 @@ func TestTemplateProcessNotChanged(t *testing.T) {
 		Status:   &Status{},
 	}
 
-	srvs := []*dns.SRV{
-		&dns.SRV{Target: "server.example.com."},
+	srvsByDomain := map[string][]*dns.SRV{
+		"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
 	}
 
+	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
+
 	tempFile("server.example.com.", func(dest *os.File) {
-		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+		tempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
-			updated := tmpl.Process(srvs)
+			updated := tmpl.Process(srvsByDomain)
 			assert.Equal(false, updated)
 			assert.Equal(true, tmpl.Status.Ok)
 			buf, _ := ioutil.ReadFile(dest.Name())
@@ -221,15 +229,17 @@ func TestTemplateProcessUpdateFailed(t *testing.T) {
 		Status:   &Status{},
 	}
 
-	srvs := []*dns.SRV{
-		&dns.SRV{Target: "server.example.com."},
+	srvsByDomain := map[string][]*dns.SRV{
+		"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
 	}
 
+	tmplSrc := `{{ $srvs := index .domains "_mysql._tcp.example.com" }}{{ range $srvs }}{{ .Target }}{{ end }}`
+
 	tempFile("server0.example.com.", func(dest *os.File) {
-		tempFile("{{ range .srvs }}{{ .Target }}{{ end }}", func(src *os.File) {
+		tempFile(tmplSrc, func(src *os.File) {
 			tmpl.Dest = dest.Name()
 			tmpl.Src = src.Name()
-			updated := tmpl.Process(srvs)
+			updated := tmpl.Process(srvsByDomain)
 			assert.Equal(false, updated)
 			assert.Equal(false, tmpl.Status.Ok)
 			buf, _ := ioutil.ReadFile(dest.Name())

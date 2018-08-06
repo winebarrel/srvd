@@ -55,7 +55,7 @@ func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 	return
 }
 
-func (tmpl *Template) evalute(srvs []*dns.SRV) (pbuf *bytes.Buffer, err error) {
+func (tmpl *Template) evalute(srvsByDomain map[string][]*dns.SRV) (pbuf *bytes.Buffer, err error) {
 	input, err := ioutil.ReadFile(tmpl.Src)
 
 	if err != nil {
@@ -63,8 +63,9 @@ func (tmpl *Template) evalute(srvs []*dns.SRV) (pbuf *bytes.Buffer, err error) {
 	}
 
 	vars := map[string]interface{}{
-		"srvs": srvs,
+		"domains": srvsByDomain,
 	}
+
 	name := filepath.Base(tmpl.Src)
 	buf, err := sigil.Execute(input, vars, name)
 
@@ -149,8 +150,8 @@ func (tmpl *Template) update(tempPath string) (err error) {
 	return
 }
 
-func (tmpl *Template) Process(srvs []*dns.SRV) (updated bool) {
-	buf, err := tmpl.evalute(srvs)
+func (tmpl *Template) Process(srvsByDomain map[string][]*dns.SRV) (updated bool) {
+	buf, err := tmpl.evalute(srvsByDomain)
 
 	if err != nil {
 		tmpl.Status.Ok = false

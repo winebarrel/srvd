@@ -16,7 +16,7 @@ srvd -config srvd.toml
 ```toml
 src = "/etc/haproxy/haproxy.cfg.tmpl"
 dest = "/etc/haproxy/haproxy.cfg"
-domain = "_http._tcp.example.com"
+domains = ["_http._tcp.example.com"]
 reload_cmd = "/bin/systemctl reload haproxy.service"
 check_cmd = "/usr/sbin/haproxy -c -V -f {{ .src }}"
 interval = 1
@@ -31,8 +31,9 @@ cooldown = 60
 ```
 backend nodes
   mode tcp
+  {{ $srvs := index .domains "_http._tcp.example.com" }}
   # see https://godoc.org/github.com/miekg/dns#SRV
-  {{ range .srvs }}
+  {{ range $srvs }}
   server {{ .Target }} {{ .Target }}:{{ .Port }}
   {{ end }}
 ```

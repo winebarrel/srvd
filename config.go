@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Src        string
 	Dest       string
-	Domain     string
+	Domains    []string
 	ResolvConf string `toml:"resolv_conf"`
 	ReloadCmd  string `toml:"reload_cmd"`
 	CheckCmd   string `toml:"check_cmd"`
@@ -40,8 +40,8 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 		return
 	}
 
-	if config.Domain == "" {
-		err = fmt.Errorf("domain is required")
+	if len(config.Domains) == 0 {
+		err = fmt.Errorf("domains is required")
 		return
 	}
 

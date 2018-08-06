@@ -27,10 +27,14 @@ func TestWorkerUpdated(t *testing.T) {
 		dnsCli = &DnsClient{}
 
 		patchInstanceMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
-			return func(_ *DnsClient) (srvs []*dns.SRV, err error) {
+			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
-				srvs = make([]*dns.SRV, 2)
+
+				srvsByDomain = map[string][]*dns.SRV{
+					"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
+				}
+
 				return
 			}
 		})
@@ -43,7 +47,7 @@ func TestWorkerUpdated(t *testing.T) {
 		tmpl = &Template{Status: status}
 
 		patchInstanceMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
-			return func(tp *Template, srvs []*dns.SRV) (updated bool) {
+			return func(tp *Template, _ map[string][]*dns.SRV) (updated bool) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
 				tp.Status.Ok = true
@@ -84,10 +88,14 @@ func TestWorkerNonUpdated(t *testing.T) {
 		dnsCli = &DnsClient{}
 
 		patchInstanceMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
-			return func(_ *DnsClient) (srvs []*dns.SRV, err error) {
+			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
-				srvs = make([]*dns.SRV, 2)
+
+				srvsByDomain = map[string][]*dns.SRV{
+					"_mysql._tcp.example.com": []*dns.SRV{&dns.SRV{Target: "server.example.com."}},
+				}
+
 				return
 			}
 		})
@@ -100,7 +108,7 @@ func TestWorkerNonUpdated(t *testing.T) {
 		tmpl = &Template{Status: status}
 
 		patchInstanceMethod(tmpl, "Process", func(guard **monkey.PatchGuard) interface{} {
-			return func(tp *Template, srvs []*dns.SRV) (updated bool) {
+			return func(tp *Template, _ map[string][]*dns.SRV) (updated bool) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
 				tp.Status.Ok = false
