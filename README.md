@@ -8,7 +8,7 @@ srvd
 ## Usage
 
 ```sh
-srvd -config srvd.toml
+srvd -config srvd.toml # -dryrun
 ```
 
 ## Configuration example

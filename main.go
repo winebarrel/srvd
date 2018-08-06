@@ -19,6 +19,10 @@ func main() {
 		log.Fatalf("Configuration loading failed: %s", err)
 	}
 
+	if config.Dryrun {
+		log.Println("*** Dry run mode ***")
+	}
+
 	workerStopChan := make(chan bool)
 	workerDoneChan := make(chan error)
 	statusChan := make(chan Status)
@@ -36,14 +40,14 @@ LOOP:
 	for {
 		select {
 		case s := <-signalChan:
-			log.Printf("Caught %s, Exiting", s)
+			log.Printf("Caught %s, Exiting\n", s)
 			close(workerStopChan)
 			close(statusChan)
 		case e := <-workerDoneChan:
 			if e != nil {
 				log.Fatalf("FATAL: Processing failed: %s", e)
 			} else {
-				log.Printf("Exited")
+				log.Println("Exited")
 				break LOOP
 			}
 		}

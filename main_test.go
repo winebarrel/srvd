@@ -21,8 +21,9 @@ func TestMain(t *testing.T) {
 		return
 	})
 
-	monkey.Patch(LoadConfig, func(_ *Flags) (_ *Config, _ error) {
+	monkey.Patch(LoadConfig, func(_ *Flags) (config *Config, _ error) {
 		defer monkey.Unpatch(LoadConfig)
+		config = &Config{}
 		isLoadConfigCalled = true
 		return
 	})

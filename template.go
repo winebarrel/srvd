@@ -22,6 +22,7 @@ type Template struct {
 	CheckCmd  *Command
 	ReloadCmd *Command
 	Status    *Status
+	Dryrun    bool
 }
 
 func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
@@ -33,6 +34,7 @@ func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 		DestGid:   os.Getgid(),
 		ReloadCmd: NewCommand(config.ReloadCmd, config.Timeout),
 		Status:    status,
+		Dryrun:    config.Dryrun,
 	}
 
 	if config.CheckCmd != "" {
@@ -124,6 +126,13 @@ func (tmpl *Template) update(tempPath string) (err error) {
 		}
 
 		defer os.Remove(destBak)
+	}
+
+	if tmpl.Dryrun {
+		log.Println("*** It does not update the configuration file because it is in dry run mode ***")
+		newDest, _ := ioutil.ReadFile(tempPath)
+		log.Printf("The new configuration file is as follows:\n---\n%s\n---\n", newDest)
+		return
 	}
 
 	err = os.Rename(tempPath, tmpl.Dest)

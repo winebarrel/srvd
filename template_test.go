@@ -100,6 +100,26 @@ func TestTemplateUpdate(t *testing.T) {
 	})
 }
 
+func TestTemplateUpdateDryrun(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		Dryrun:    true,
+	}
+
+	tempFile("server0.example.com.", func(dest *os.File) {
+		tempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal(nil, err)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server0.example.com.", string(buf))
+		})
+	})
+}
+
 func TestTemplateUpdateCheckFailed(t *testing.T) {
 	assert := assert.New(t)
 
