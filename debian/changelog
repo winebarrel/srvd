@@ -1,3 +1,9 @@
+srvd (0.2.1) unstable; urgency=low
+
+  * Add dry run mode.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Mon, 06 Aug 2018 18:15:39 +0900
+
 srvd (0.2.0) unstable; urgency=medium
 
   * Support multiple domains.
