@@ -6,6 +6,6 @@ before_install:
   - go get -u github.com/golang/dep/cmd/dep
   - go get -u golang.org/x/lint/golint
 install:
-  - $GOPATH/bin/dep ensure
+  - make dep-ensure
 script:
   - make
