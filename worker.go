@@ -65,6 +65,11 @@ func (worker *Worker) Run() {
 
 		worker.StatusChan <- status
 
+		if worker.Config.Oneshot {
+			close(worker.StopChan)
+			return
+		}
+
 		select {
 		case <-worker.StopChan:
 			return

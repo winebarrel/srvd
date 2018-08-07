@@ -87,6 +87,7 @@ func TestTemplateUpdate(t *testing.T) {
 	tmpl := &Template{
 		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
 		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		Config:    &Config{},
 	}
 
 	testutils.TempFile("server0.example.com.", func(dest *os.File) {
@@ -106,7 +107,7 @@ func TestTemplateUpdateDryrun(t *testing.T) {
 	tmpl := &Template{
 		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
 		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
-		Dryrun:    true,
+		Config:    &Config{Dryrun: true},
 	}
 
 	testutils.TempFile("server0.example.com.", func(dest *os.File) {
@@ -138,12 +139,36 @@ func TestTemplateUpdateCheckFailed(t *testing.T) {
 	})
 }
 
+func TestTemplateUpdateNoCheck(t *testing.T) {
+	assert := assert.New(t)
+
+	config := &Config{
+		ReloadCmd: "true",
+		CheckCmd:  "false",
+		Timeout:   3,
+		Nocheck:   true,
+	}
+
+	tmpl, _ := NewTemplate(config, &Status{})
+
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal(nil, err)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server.example.com.", string(buf))
+		})
+	})
+}
+
 func TestTemplateUpdateReloadFailed(t *testing.T) {
 	assert := assert.New(t)
 
 	tmpl := &Template{
 		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
 		ReloadCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+		Config:    &Config{},
 	}
 
 	testutils.TempFile("server0.example.com.", func(dest *os.File) {
@@ -153,6 +178,26 @@ func TestTemplateUpdateReloadFailed(t *testing.T) {
 			assert.Equal("Reload command failed: exit status 1", err.Error())
 			buf, _ := ioutil.ReadFile(dest.Name())
 			assert.Equal("server0.example.com.", string(buf))
+		})
+	})
+}
+
+func TestTemplateUpdateNoReload(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+		Config:    &Config{Noreload: true},
+	}
+
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal(nil, err)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			assert.Equal("server.example.com.", string(buf))
 		})
 	})
 }
@@ -167,6 +212,7 @@ func TestTemplateProcess(t *testing.T) {
 		DestGID:   os.Getgid(),
 		DestMode:  0644,
 		Status:    &Status{},
+		Config:    &Config{},
 	}
 
 	srvsByDomain := map[string][]*dns.SRV{

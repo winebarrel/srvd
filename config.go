@@ -20,11 +20,21 @@ type Config struct {
 	Cooldown   int
 	StatusPort int `toml:"status_port"`
 	Dryrun     bool
+	Noreload   bool
+	Nocheck    bool
+	Nohttpd    bool
+	Oneshot    bool
 }
 
 // LoadConfig creates Config struct from the given flags.
 func LoadConfig(flags *Flags) (config *Config, err error) {
-	config = &Config{Dryrun: flags.Dryrun}
+	config = &Config{
+		Dryrun:   flags.Dryrun,
+		Noreload: flags.Noreload,
+		Nocheck:  flags.Nocheck,
+		Nohttpd:  flags.Nohttpd,
+		Oneshot:  flags.Oneshot,
+	}
 
 	if _, e := os.Stat(flags.Config); os.IsNotExist(e) {
 		err = fmt.Errorf("Config file not found: %s", flags.Config)

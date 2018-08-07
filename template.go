@@ -26,7 +26,7 @@ type Template struct {
 	CheckCmd  *Command
 	ReloadCmd *Command
 	Status    *Status
-	Dryrun    bool
+	Config    *Config
 }
 
 // NewTemplate creates Template struct.
@@ -39,10 +39,10 @@ func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 		DestGID:   os.Getgid(),
 		ReloadCmd: NewCommand(config.ReloadCmd, config.Timeout),
 		Status:    status,
-		Dryrun:    config.Dryrun,
+		Config:    config,
 	}
 
-	if config.CheckCmd != "" {
+	if config.CheckCmd != "" && !config.Nocheck {
 		tmpl.CheckCmd = NewCommand(config.CheckCmd, config.Timeout)
 	}
 
@@ -133,7 +133,7 @@ func (tmpl *Template) update(tempPath string) (err error) {
 		defer os.Remove(destBak)
 	}
 
-	if tmpl.Dryrun {
+	if tmpl.Config.Dryrun {
 		log.Println("*** It does not update the configuration file because it is in dry run mode ***")
 		newDest, _ := ioutil.ReadFile(tempPath)
 		log.Printf("The new configuration file is as follows:\n---\n%s\n---\n", newDest)
@@ -146,19 +146,21 @@ func (tmpl *Template) update(tempPath string) (err error) {
 		return
 	}
 
-	log.Printf("Run '%s' for reloading", tmpl.ReloadCmd.Cmdline)
-	err = tmpl.ReloadCmd.Run(tempPath)
+	if !tmpl.Config.Noreload {
+		log.Printf("Run '%s' for reloading", tmpl.ReloadCmd.Cmdline)
+		err = tmpl.ReloadCmd.Run(tempPath)
 
-	if err != nil {
-		err = fmt.Errorf("Reload command failed: %s", err)
+		if err != nil {
+			err = fmt.Errorf("Reload command failed: %s", err)
 
-		if destBak == "" {
-			os.Remove(tmpl.Dest)
-		} else {
-			os.Rename(destBak, tmpl.Dest)
+			if destBak == "" {
+				os.Remove(tmpl.Dest)
+			} else {
+				os.Rename(destBak, tmpl.Dest)
+			}
+
+			return
 		}
-
-		return
 	}
 
 	return

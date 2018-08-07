@@ -38,7 +38,10 @@ func (httpd *Httpd) handler(w http.ResponseWriter, r *http.Request) {
 
 // Run executes httpd.
 func (httpd *Httpd) Run() {
-	http.HandleFunc("/status", httpd.handler)
 	go httpd.updateStatus()
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", httpd.Config.StatusPort), nil))
+
+	if !httpd.Config.Nohttpd {
+		http.HandleFunc("/status", httpd.handler)
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", httpd.Config.StatusPort), nil))
+	}
 }
