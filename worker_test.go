@@ -130,3 +130,52 @@ func TestWorkerNonUpdated(t *testing.T) {
 	worker.Run()
 	assert.Equal(false, status.Ok)
 }
+
+func TestWorkerRecordNotFound(t *testing.T) {
+	assert := assert.New(t)
+	workerStopChan := make(chan bool)
+	workerDoneChan := make(chan error)
+	statusChan := make(chan Status)
+
+	worker := &Worker{
+		Config:     &Config{Interval: 60},
+		StopChan:   workerStopChan,
+		DoneChan:   workerDoneChan,
+		StatusChan: statusChan,
+	}
+
+	monkey.Patch(NewDNSClient, func(config *Config) (dnsCli *DNSClient, err error) {
+		defer monkey.Unpatch(NewDNSClient)
+		dnsCli = &DNSClient{}
+
+		testutils.PatchMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
+			return func(_ *DNSClient) (srvsByDomain map[string][]*dns.SRV) {
+				defer (*guard).Unpatch()
+				(*guard).Restore()
+
+				srvsByDomain = map[string][]*dns.SRV{
+					"_mysql._tcp.example.com": []*dns.SRV{},
+				}
+
+				return
+			}
+		})
+
+		return
+	})
+
+	monkey.Patch(NewTemplate, func(_ *Config, _ *Status) (_ *Template, _ error) {
+		defer monkey.Unpatch(NewTemplate)
+		return
+	})
+
+	var status Status
+
+	go func() {
+		status = <-statusChan
+		close(workerStopChan)
+	}()
+
+	worker.Run()
+	assert.Equal(false, status.Ok)
+}

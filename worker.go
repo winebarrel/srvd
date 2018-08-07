@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -32,7 +33,7 @@ func (worker *Worker) Run() {
 	dnsCli, err := NewDNSClient(worker.Config)
 
 	if err != nil {
-		worker.DoneChan <- fmt.Errorf("DnsClient struct creation failed: %s", err)
+		worker.DoneChan <- fmt.Errorf("DNSClient struct creation failed: %s", err)
 		close(worker.StopChan)
 		return
 	}
@@ -52,9 +53,19 @@ func (worker *Worker) Run() {
 
 	for {
 		srvsByDomain := dnsCli.Dig()
+		dnsErr := false
 		now := time.Now()
 
-		if updatedAt.Add(cooldown).Before(now) {
+		for domain, srvs := range srvsByDomain {
+			if len(srvs) == 0 {
+				log.Printf("ERROR: %s SRV record not found", domain)
+				dnsErr = true
+			}
+		}
+
+		if dnsErr {
+			status.Ok = false
+		} else if updatedAt.Add(cooldown).Before(now) {
 			updated := tmpl.Process(srvsByDomain)
 
 			if updated {
