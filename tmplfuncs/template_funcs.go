@@ -1,6 +1,7 @@
-package template_funcs
+package tmplfuncs
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"strings"
@@ -20,6 +21,7 @@ func init() {
 		"ipv4sbyif":  ipv4sByInterface,
 		"ipv4toi":    ipv4ToI,
 		"rotatesrvs": rotateSRVs,
+		"fetchsrvs":  fetchSRVs,
 	})
 }
 
@@ -98,4 +100,15 @@ func rotateSRVs(ary []*dns.SRV, n int) []*dns.SRV {
 	}
 
 	return ary
+}
+
+func fetchSRVs(srvsByDomain map[string][]*dns.SRV, domain string) (srvs []*dns.SRV, err error) {
+	var ok bool
+	srvs, ok = srvsByDomain[domain]
+
+	if !ok {
+		err = fmt.Errorf(`Key "%s" not found`, domain)
+	}
+
+	return
 }

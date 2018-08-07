@@ -13,7 +13,7 @@ func TestMd5(t *testing.T) {
 	assert := assert.New(t)
 
 	testutils.TempFile("hello", func(f *os.File) {
-		assert.Equal("5d41402abc4b2a76b9719d911017c592", Md5(f.Name()))
+		assert.Equal("5d41402abc4b2a76b9719d911017c592", MD5(f.Name()))
 	})
 }
 

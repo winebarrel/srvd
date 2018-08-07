@@ -1,4 +1,4 @@
-package template_funcs
+package tmplfuncs
 
 import (
 	"net"
@@ -94,4 +94,14 @@ func TestTemplateFuncsRotateSRVs(t *testing.T) {
 	assert.Equal(actual[2].Target, "1")
 	assert.Equal(actual[3].Target, "2")
 	assert.Equal(actual[4].Target, "3")
+}
+
+func TestTemplateFuncsFetchSRVs(t *testing.T) {
+	assert := assert.New(t)
+	srvsByDomain := map[string][]*dns.SRV{"exist": []*dns.SRV{}}
+	srvs, err := fetchSRVs(srvsByDomain, "exist")
+	assert.Equal([]*dns.SRV{}, srvs)
+	assert.Equal(nil, err)
+	_, err = fetchSRVs(srvsByDomain, "not_exist")
+	assert.Equal(`Key "not_exist" not found`, err.Error())
 }

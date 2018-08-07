@@ -23,7 +23,7 @@ endif
 
 .PHONY: lint
 lint:
-	golint -set_exit_status
+	golint -set_exit_status . tmplfuncs utils testutils
 
 .PHONY: test
 test: $(SRC) $(TEST_SRC) lint

@@ -10,7 +10,8 @@ import (
 	"os/exec"
 )
 
-func Md5(path string) string {
+// MD5 calculate MD5 hash.
+func MD5(path string) string {
 	f, err := os.Open(path)
 
 	if err != nil {
@@ -29,6 +30,7 @@ func Md5(path string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+// Copy copies the file.
 func Copy(src string, dest string) (err error) {
 	cmd := exec.Command("cp", "-p", src, dest)
 	out, err := cmd.CombinedOutput()

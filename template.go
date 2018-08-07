@@ -12,7 +12,7 @@ import (
 	"github.com/gliderlabs/sigil"
 	_ "github.com/gliderlabs/sigil/builtin"
 	"github.com/miekg/dns"
-	_ "github.com/winebarrel/srvd/template_funcs"
+	_ "github.com/winebarrel/srvd/tmplfuncs"
 	"github.com/winebarrel/srvd/utils"
 )
 
@@ -104,8 +104,8 @@ func (tmpl *Template) isChanged(tempPath string) bool {
 		return true
 	}
 
-	destMd5 := utils.Md5(tmpl.Dest)
-	tempMd5 := utils.Md5(tempPath)
+	destMd5 := utils.MD5(tmpl.Dest)
+	tempMd5 := utils.MD5(tempPath)
 	return destMd5 != tempMd5
 }
 

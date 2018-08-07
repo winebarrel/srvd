@@ -49,7 +49,7 @@ cooldown = 60
 ```
 backend nodes
   mode tcp
-  {{ $srvs := index .domains "_http._tcp.example.com" }}
+  {{ $srvs := fetchsrvs .domains "_http._tcp.example.com" }}
   # see https://godoc.org/github.com/miekg/dns#SRV
   {{ range $srvs }}
   server {{ .Target }} {{ .Target }}:{{ .Port }}
