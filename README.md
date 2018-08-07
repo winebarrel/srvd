@@ -8,7 +8,25 @@ srvd
 ## Usage
 
 ```sh
-srvd -config srvd.toml # -dryrun
+srvd -config srvd.toml
+```
+
+```
+Usage of ./pkg/srvd:
+  -config string
+    	Config file path (default "srvd.toml")
+  -dryrun
+    	Dry run mode
+  -nocheck
+    	Skip checking
+  -nohttpd
+    	Stop httpd
+  -noreload
+    	Skip reloading
+  -oneshot
+    	Run once
+  -version
+    	Print version and exit
 ```
 
 ## Configuration example
