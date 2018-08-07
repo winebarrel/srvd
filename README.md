@@ -25,6 +25,8 @@ Usage of ./pkg/srvd:
     	Skip reloading
   -oneshot
     	Run once
+  -sdnotify
+    	Use sd_notify
   -version
     	Print version and exit
 ```

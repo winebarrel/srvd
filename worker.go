@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/okzk/sdnotify"
 )
 
 // Worker struct has information on a goroutine which periodically updates the configuration file.
@@ -75,6 +77,12 @@ func (worker *Worker) Run() {
 		}
 
 		worker.StatusChan <- status
+
+		if worker.Config.Sdnotify {
+			sdnotify.Ready()
+			// notify once
+			worker.Config.Sdnotify = false
+		}
 
 		if worker.Config.Oneshot {
 			close(worker.StopChan)

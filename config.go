@@ -24,6 +24,7 @@ type Config struct {
 	Nocheck    bool
 	Nohttpd    bool
 	Oneshot    bool
+	Sdnotify   bool
 }
 
 // LoadConfig creates Config struct from the given flags.
@@ -34,6 +35,7 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 		Nocheck:  flags.Nocheck,
 		Nohttpd:  flags.Nohttpd,
 		Oneshot:  flags.Oneshot,
+		Sdnotify: flags.Sdnotify,
 	}
 
 	if _, e := os.Stat(flags.Config); os.IsNotExist(e) {

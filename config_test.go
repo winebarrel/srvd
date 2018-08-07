@@ -36,12 +36,13 @@ timeout = 2
 		assert.Equal(0, config.Cooldown)
 		assert.Equal(8080, config.StatusPort)
 		assert.Equal(false, config.Dryrun)
+		assert.Equal(false, config.Sdnotify)
 	})
 }
 
 func TestLoadConfigWithOptionalConfig(t *testing.T) {
 	assert := assert.New(t)
-	flags := &Flags{Dryrun: true}
+	flags := &Flags{Dryrun: true, Sdnotify: true}
 
 	conf := `
 src = "src"
@@ -71,6 +72,7 @@ status_port = 8081
 		assert.Equal(60, config.Cooldown)
 		assert.Equal(8081, config.StatusPort)
 		assert.Equal(true, config.Dryrun)
+		assert.Equal(true, config.Sdnotify)
 	})
 }
 

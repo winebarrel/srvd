@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/okzk/sdnotify"
 )
 
 func init() {
@@ -14,6 +16,10 @@ func init() {
 func main() {
 	flags := ParseFlag()
 	config, err := LoadConfig(flags)
+
+	if config.Sdnotify {
+		defer sdnotify.Stopping()
+	}
 
 	if err != nil {
 		log.Fatalf("Configuration loading failed: %s", err)
