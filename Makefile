@@ -46,8 +46,12 @@ package: clean $(PROGRAM)
 install-dep:
 	go get -u github.com/golang/dep/cmd/dep
 
+.PHONY: install-golint
+install-golint:
+	go get -u golang.org/x/lint/golint
+
 .PHONY: package/linux
-package/linux: install-dep dep-ensure
+package/linux: install-dep install-golint dep-ensure
 	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) package clean-vendor
 
@@ -57,7 +61,7 @@ deb:
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker clean-vendor
 
 .PHONY: deb/docker
-deb/docker: install-dep dep-ensure
+deb/docker: install-dep install-golint dep-ensure
 	apt-get update
 	apt-get install -y debhelper
 	dpkg-buildpackage -us -uc
