@@ -4,21 +4,30 @@ import (
 	"log"
 	"net"
 	"sort"
+	"time"
 
 	"github.com/miekg/dns"
 )
+
+// SRVCache struct has SRV record and expiration date.
+type SRVCache struct {
+	SRVs      []*dns.SRV
+	ExpiredAt time.Time
+}
 
 // DNSClient struct has DNS query information.
 type DNSClient struct {
 	ClientConfig *dns.ClientConfig
 	Client       *dns.Client
 	Messages     map[string]*dns.Msg
+	Cache        map[string]*SRVCache
 }
 
 // NewDNSClient creates DNSClient struct.
 func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
 	dnsCli = &DNSClient{
 		Client: &dns.Client{},
+		Cache:  map[string]*SRVCache{},
 	}
 
 	dnsCli.Messages = make(map[string]*dns.Msg, len(config.Domains))
@@ -62,6 +71,15 @@ func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 	srvsByDomain = make(map[string][]*dns.SRV, len(dnsCli.Messages))
 
 	for domain, msg := range dnsCli.Messages {
+		if cachedEntry, ok := dnsCli.Cache[domain]; ok {
+			if cachedEntry.ExpiredAt.Before(time.Now()) {
+				delete(dnsCli.Cache, domain)
+			} else {
+				srvsByDomain[domain] = cachedEntry.SRVs
+				continue
+			}
+		}
+
 		for _, server := range dnsCli.ClientConfig.Servers {
 			hostPort := net.JoinHostPort(server, dnsCli.ClientConfig.Port)
 			r, _, err := dnsCli.Client.Exchange(msg, hostPort)
@@ -77,9 +95,22 @@ func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 
 				sortSRVs(srvs)
 				srvsByDomain[domain] = srvs
-			} else {
-				srvsByDomain[domain] = []*dns.SRV{}
+
+				if len(srvs) > 0 {
+					ttl := time.Duration(srvs[0].Hdr.Ttl) * time.Second
+
+					dnsCli.Cache[domain] = &SRVCache{
+						SRVs:      srvs,
+						ExpiredAt: time.Now().Add(ttl),
+					}
+				}
+
+				break
 			}
+		}
+
+		if _, ok := srvsByDomain[domain]; !ok {
+			srvsByDomain[domain] = []*dns.SRV{}
 		}
 	}
 
