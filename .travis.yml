@@ -3,9 +3,10 @@ language: go
 go:
   - 1.10.3
 before_install:
-  - go get -u github.com/golang/dep/cmd/dep
-  - go get -u golang.org/x/lint/golint
+  - make install-dep
+  - make install-golint
 install:
   - make dep-ensure
 script:
   - make
+  - ./pkg/srvd -version 
