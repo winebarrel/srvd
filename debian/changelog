@@ -1,3 +1,10 @@
+srvd (0.2.8) unstable; urgency=medium
+
+  * Cache DNS records.
+  * Fix SRV records sort order.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Tue, 07 Aug 2018 20:45:18 +0900
+
 srvd (0.2.7) unstable; urgency=low
 
   * Add fetchsrvs template function.
