@@ -1,7 +1,6 @@
 package template_funcs
 
 import (
-	"fmt"
 	"net"
 	"os"
 	"strings"
@@ -43,8 +42,6 @@ func ipv4sByInterface() (ipv4sByIf map[string][]string, err error) {
 		}
 
 		for _, a := range addrs {
-			fmt.Println(a)
-
 			addrStr := a.String()
 
 			if strings.Contains(addrStr, ".") {
