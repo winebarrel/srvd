@@ -8,14 +8,16 @@ import (
 	"github.com/miekg/dns"
 )
 
-type DnsClient struct {
+// DNSClient struct has DNS query information.
+type DNSClient struct {
 	ClientConfig *dns.ClientConfig
 	Client       *dns.Client
 	Messages     map[string]*dns.Msg
 }
 
-func NewDnsClient(config *Config) (dnsCli *DnsClient, err error) {
-	dnsCli = &DnsClient{
+// NewDNSClient creates DNSClient struct.
+func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
+	dnsCli = &DNSClient{
 		Client: &dns.Client{},
 	}
 
@@ -32,7 +34,8 @@ func NewDnsClient(config *Config) (dnsCli *DnsClient, err error) {
 	return
 }
 
-func (dnsCli *DnsClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
+// Dig queries the SRV record.
+func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 	srvsByDomain = make(map[string][]*dns.SRV, len(dnsCli.Messages))
 
 	for domain, msg := range dnsCli.Messages {

@@ -21,8 +21,12 @@ else
 	CGO_ENABLED=0 go build -ldflags "-X main.version=$(VERSION)" -o pkg/$(PROGRAM)
 endif
 
+.PHONY: lint
+lint:
+	golint -set_exit_status
+
 .PHONY: test
-test: $(SRC) $(TEST_SRC)
+test: $(SRC) $(TEST_SRC) lint
 	go test -v -gcflags '-N -l' ./...
 
 .PHONY: clean

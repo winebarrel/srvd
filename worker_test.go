@@ -22,12 +22,12 @@ func TestWorkerUpdated(t *testing.T) {
 		StatusChan: statusChan,
 	}
 
-	monkey.Patch(NewDnsClient, func(config *Config) (dnsCli *DnsClient, err error) {
-		defer monkey.Unpatch(NewDnsClient)
-		dnsCli = &DnsClient{}
+	monkey.Patch(NewDNSClient, func(config *Config) (dnsCli *DNSClient, err error) {
+		defer monkey.Unpatch(NewDNSClient)
+		dnsCli = &DNSClient{}
 
 		testutils.PatchMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
-			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
+			return func(_ *DNSClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
 
@@ -83,12 +83,12 @@ func TestWorkerNonUpdated(t *testing.T) {
 		StatusChan: statusChan,
 	}
 
-	monkey.Patch(NewDnsClient, func(config *Config) (dnsCli *DnsClient, err error) {
-		defer monkey.Unpatch(NewDnsClient)
-		dnsCli = &DnsClient{}
+	monkey.Patch(NewDNSClient, func(config *Config) (dnsCli *DNSClient, err error) {
+		defer monkey.Unpatch(NewDNSClient)
+		dnsCli = &DNSClient{}
 
 		testutils.PatchMethod(dnsCli, "Dig", func(guard **monkey.PatchGuard) interface{} {
-			return func(_ *DnsClient) (srvsByDomain map[string][]*dns.SRV) {
+			return func(_ *DNSClient) (srvsByDomain map[string][]*dns.SRV) {
 				defer (*guard).Unpatch()
 				(*guard).Restore()
 

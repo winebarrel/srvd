@@ -16,25 +16,27 @@ import (
 	"github.com/winebarrel/srvd/utils"
 )
 
+// Template struct has template information of the configuration file to be updated.
 type Template struct {
 	Src       string
 	Dest      string
 	DestMode  os.FileMode
-	DestUid   int
-	DestGid   int
+	DestUID   int
+	DestGID   int
 	CheckCmd  *Command
 	ReloadCmd *Command
 	Status    *Status
 	Dryrun    bool
 }
 
+// NewTemplate creates Template struct.
 func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 	tmpl = &Template{
 		Src:       config.Src,
 		Dest:      config.Dest,
 		DestMode:  0644,
-		DestUid:   os.Getuid(),
-		DestGid:   os.Getgid(),
+		DestUID:   os.Getuid(),
+		DestGID:   os.Getgid(),
 		ReloadCmd: NewCommand(config.ReloadCmd, config.Timeout),
 		Status:    status,
 		Dryrun:    config.Dryrun,
@@ -53,8 +55,8 @@ func NewTemplate(config *Config, status *Status) (tmpl *Template, err error) {
 	if s, e := os.Stat(tmpl.Dest); e == nil {
 		tmpl.DestMode = s.Mode()
 		stat := s.Sys().(*syscall.Stat_t)
-		tmpl.DestUid = int(stat.Uid)
-		tmpl.DestGid = int(stat.Gid)
+		tmpl.DestUID = int(stat.Uid)
+		tmpl.DestGID = int(stat.Gid)
 	}
 
 	return
@@ -91,7 +93,7 @@ func (tmpl *Template) createTempDest(buf *bytes.Buffer) (tempPath string, err er
 
 	defer destTemp.Close()
 	tempPath = destTemp.Name()
-	os.Chown(tempPath, tmpl.DestUid, tmpl.DestGid)
+	os.Chown(tempPath, tmpl.DestUID, tmpl.DestGID)
 	os.Chmod(tempPath, tmpl.DestMode)
 	_, err = destTemp.Write(buf.Bytes())
 	return
@@ -162,6 +164,7 @@ func (tmpl *Template) update(tempPath string) (err error) {
 	return
 }
 
+// Process updates the configuration file according to the SRV record.
 func (tmpl *Template) Process(srvsByDomain map[string][]*dns.SRV) (updated bool) {
 	buf, err := tmpl.evalute(srvsByDomain)
 

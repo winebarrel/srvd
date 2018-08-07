@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+// Config struct has the setting of srvd.
 type Config struct {
 	Src        string
 	Dest       string
@@ -21,6 +22,7 @@ type Config struct {
 	Dryrun     bool
 }
 
+// LoadConfig creates Config struct from the given flags.
 func LoadConfig(flags *Flags) (config *Config, err error) {
 	config = &Config{Dryrun: flags.Dryrun}
 

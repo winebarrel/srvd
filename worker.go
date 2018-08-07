@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Worker struct has information on a goroutine which periodically updates the configuration file.
 type Worker struct {
 	Config     *Config
 	StopChan   chan bool
@@ -12,6 +13,7 @@ type Worker struct {
 	StatusChan chan Status
 }
 
+// NewWorker creates Worker structs.
 func NewWorker(config *Config, stopChan chan bool, doneChan chan error, statusChan chan Status) (worker *Worker) {
 	worker = &Worker{
 		Config:     config,
@@ -23,10 +25,11 @@ func NewWorker(config *Config, stopChan chan bool, doneChan chan error, statusCh
 	return
 }
 
+// Run starts a goroutine which periodically updates the configuration file.
 func (worker *Worker) Run() {
 	defer close(worker.DoneChan)
 
-	dnsCli, err := NewDnsClient(worker.Config)
+	dnsCli, err := NewDNSClient(worker.Config)
 
 	if err != nil {
 		worker.DoneChan <- fmt.Errorf("DnsClient struct creation failed: %s", err)

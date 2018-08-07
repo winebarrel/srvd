@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDnsClientDig(t *testing.T) {
+func TestDNSClientDig(t *testing.T) {
 	assert := assert.New(t)
 
 	config := &Config{
@@ -15,7 +15,7 @@ func TestDnsClientDig(t *testing.T) {
 		ResolvConf: "/etc/resolv.conf",
 	}
 
-	dnsCli, _ := NewDnsClient(config)
+	dnsCli, _ := NewDNSClient(config)
 	srvsByDomain := dnsCli.Dig()
 	assert.Equal(1, len(srvsByDomain))
 	srvs := srvsByDomain["_mysql._tcp.winebarrel.jp"]
@@ -33,7 +33,7 @@ func TestDnsClientDig(t *testing.T) {
 	}
 }
 
-func TestDnsClientDigNotFound(t *testing.T) {
+func TestDNSClientDigNotFound(t *testing.T) {
 	assert := assert.New(t)
 
 	config := &Config{
@@ -41,7 +41,7 @@ func TestDnsClientDigNotFound(t *testing.T) {
 		ResolvConf: "/etc/resolv.conf",
 	}
 
-	dnsCli, _ := NewDnsClient(config)
+	dnsCli, _ := NewDNSClient(config)
 	srvsByDomain := dnsCli.Dig()
 	assert.Equal(1, len(srvsByDomain))
 	srvs := srvsByDomain["_not_exist._tcp.winebarrel.jp"]

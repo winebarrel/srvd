@@ -33,8 +33,8 @@ func TestTemplateCreateTempDest(t *testing.T) {
 	assert := assert.New(t)
 
 	tmpl := &Template{
-		DestUid:  os.Getuid(),
-		DestGid:  os.Getgid(),
+		DestUID:  os.Getuid(),
+		DestGID:  os.Getgid(),
 		DestMode: 0644,
 	}
 
@@ -163,8 +163,8 @@ func TestTemplateProcess(t *testing.T) {
 	tmpl := &Template{
 		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
 		ReloadCmd: &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
-		DestUid:   os.Getuid(),
-		DestGid:   os.Getgid(),
+		DestUID:   os.Getuid(),
+		DestGID:   os.Getgid(),
 		DestMode:  0644,
 		Status:    &Status{},
 	}
@@ -213,8 +213,8 @@ func TestTemplateProcessNotChanged(t *testing.T) {
 	assert := assert.New(t)
 
 	tmpl := &Template{
-		DestUid:  os.Getuid(),
-		DestGid:  os.Getgid(),
+		DestUID:  os.Getuid(),
+		DestGID:  os.Getgid(),
 		DestMode: 0644,
 		Status:   &Status{},
 	}
@@ -243,8 +243,8 @@ func TestTemplateProcessUpdateFailed(t *testing.T) {
 
 	tmpl := &Template{
 		CheckCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
-		DestUid:  os.Getuid(),
-		DestGid:  os.Getgid(),
+		DestUID:  os.Getuid(),
+		DestGID:  os.Getgid(),
 		DestMode: 0644,
 		Status:   &Status{},
 	}

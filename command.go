@@ -14,11 +14,13 @@ import (
 	"github.com/mattn/go-shellwords"
 )
 
+// Command struct has information on commands to be executeds.
 type Command struct {
 	Cmdline string
 	Timeout time.Duration
 }
 
+// NewCommand creates Command struct.
 func NewCommand(cmdline string, timeout int) (cmd *Command) {
 	cmd = &Command{
 		Cmdline: cmdline,
@@ -60,6 +62,7 @@ func tailf(name string, reader io.Reader, wg *sync.WaitGroup) {
 	wg.Done()
 }
 
+// Run executes the command.
 func (command *Command) Run(src string) (err error) {
 	tmpl, err := template.New(command.Cmdline).Parse(command.Cmdline)
 

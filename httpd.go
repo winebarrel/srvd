@@ -7,12 +7,14 @@ import (
 	"net/http"
 )
 
+// Httpd struct has information on httpd which returns srvd status.
 type Httpd struct {
 	Config     *Config
 	StatusChan chan Status
 	Status     *Status
 }
 
+// NewHttpd creates Httpd struct.
 func NewHttpd(config *Config, statusChan chan Status) (httpd *Httpd) {
 	httpd = &Httpd{
 		Config:     config,
@@ -34,6 +36,7 @@ func (httpd *Httpd) handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, string(status))
 }
 
+// Run executes httpd.
 func (httpd *Httpd) Run() {
 	http.HandleFunc("/status", httpd.handler)
 	go httpd.updateStatus()

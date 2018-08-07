@@ -9,14 +9,17 @@ import (
 var version string
 
 const (
+	// DefaultConfig is the default value when the setting file is not specified.
 	DefaultConfig = "srvd.toml"
 )
 
+// Flags struct has flags passed to srvd.
 type Flags struct {
 	Config string
 	Dryrun bool
 }
 
+// ParseFlag parses the flag passed to srvd.
 func ParseFlag() (flags *Flags) {
 	flags = &Flags{}
 	var printVersion bool
