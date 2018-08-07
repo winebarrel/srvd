@@ -1,3 +1,9 @@
+srvd (0.2.5) unstable; urgency=low
+
+  * Remove debug output.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Tue, 07 Aug 2018 12:25:28 +0900
+
 srvd (0.2.4) unstable; urgency=low
 
   * Add -noreload/-nocheck/-nohttpd/-oneshot.
