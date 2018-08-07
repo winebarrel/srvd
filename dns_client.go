@@ -34,6 +34,29 @@ func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
 	return
 }
 
+// sortSRVs sorts SRVS recors order by Priority Desc, Weight Desc, Target Asc, Port Desc
+func sortSRVs(srvs []*dns.SRV) {
+	sort.Slice(srvs, func(i, j int) bool {
+		if srvs[i].Priority > srvs[j].Priority { // Desc
+			return true
+		} else if srvs[i].Priority == srvs[j].Priority {
+			if srvs[i].Weight > srvs[j].Weight { // Desc
+				return true
+			} else if srvs[i].Weight == srvs[j].Weight {
+				if srvs[i].Target < srvs[j].Target { // Asc
+					return true
+				} else if srvs[i].Target == srvs[j].Target {
+					if srvs[i].Port < srvs[j].Port { // Asc
+						return true
+					}
+				}
+			}
+		}
+
+		return false
+	})
+}
+
 // Dig queries the SRV record.
 func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 	srvsByDomain = make(map[string][]*dns.SRV, len(dnsCli.Messages))
@@ -52,10 +75,7 @@ func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 					srvs[i] = a.(*dns.SRV)
 				}
 
-				sort.Slice(srvs, func(i, j int) bool {
-					return srvs[i].String() < srvs[j].String()
-				})
-
+				sortSRVs(srvs)
 				srvsByDomain[domain] = srvs
 			} else {
 				srvsByDomain[domain] = []*dns.SRV{}
