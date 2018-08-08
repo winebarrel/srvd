@@ -120,6 +120,26 @@ timeout = 2
 	})
 }
 
+func TestLoadSrcEqualDest(t *testing.T) {
+	assert := assert.New(t)
+	flags := &Flags{}
+
+	conf := `
+src = "src"
+dest = "src"
+domains = ["_http._tcp.example.com"]
+reload_cmd = "service reload nginx"
+interval = 1
+timeout = 2
+`
+
+	testutils.TempFile(conf, func(f *os.File) {
+		flags.Config = f.Name()
+		_, err := LoadConfig(flags)
+		assert.Equal("src is the same as dest", err.Error())
+	})
+}
+
 func TestLoadConfigWithoutDomain(t *testing.T) {
 	assert := assert.New(t)
 	flags := &Flags{}

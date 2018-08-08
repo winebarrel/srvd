@@ -55,6 +55,11 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 		return
 	}
 
+	if config.Src == config.Dest {
+		err = fmt.Errorf("src is the same as dest")
+		return
+	}
+
 	if len(config.Domains) == 0 {
 		err = fmt.Errorf("domains is required")
 		return
