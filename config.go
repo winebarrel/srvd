@@ -35,7 +35,6 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 		Nocheck:  flags.Nocheck,
 		Nohttpd:  flags.Nohttpd,
 		Oneshot:  flags.Oneshot,
-		Sdnotify: flags.Sdnotify,
 	}
 
 	if _, e := os.Stat(flags.Config); os.IsNotExist(e) {

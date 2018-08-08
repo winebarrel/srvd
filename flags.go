@@ -21,7 +21,6 @@ type Flags struct {
 	Nocheck  bool
 	Nohttpd  bool
 	Oneshot  bool
-	Sdnotify bool
 }
 
 // ParseFlag parses the flag passed to srvd.
@@ -35,7 +34,6 @@ func ParseFlag() (flags *Flags) {
 	flag.BoolVar(&flags.Nocheck, "nocheck", false, "Skip checking")
 	flag.BoolVar(&flags.Nohttpd, "nohttpd", false, "Stop httpd")
 	flag.BoolVar(&flags.Oneshot, "oneshot", false, "Run once")
-	flag.BoolVar(&flags.Sdnotify, "sdnotify", false, "Use sd_notify")
 	flag.BoolVar(&printVersion, "version", false, "Print version and exit")
 	flag.Parse()
 

@@ -42,7 +42,7 @@ timeout = 2
 
 func TestLoadConfigWithOptionalConfig(t *testing.T) {
 	assert := assert.New(t)
-	flags := &Flags{Dryrun: true, Sdnotify: true}
+	flags := &Flags{Dryrun: true}
 
 	conf := `
 src = "src"
@@ -55,6 +55,7 @@ interval = 1
 timeout = 2
 cooldown = 60
 status_port = 8081
+sdnotify = true
 `
 
 	testutils.TempFile(conf, func(f *os.File) {
