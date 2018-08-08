@@ -1,3 +1,9 @@
+srvd (0.3.3) unstable; urgency=low
+
+  * Fix priority sort order.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 08 Aug 2018 20:15:29 +0900
+
 srvd (0.3.2) unstable; urgency=medium
 
   * Set EDNS0 size.

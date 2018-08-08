@@ -42,6 +42,9 @@ timeout = 3
 #resolv_conf = "/etc/resolv.conf"
 cooldown = 60
 #status_port = 8080
+#sdnotify = false
+#disable_rollback_on_reload_failure = false
+#edns0_size = 4096
 ```
 
 ## Template example
