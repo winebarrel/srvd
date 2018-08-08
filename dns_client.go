@@ -44,10 +44,10 @@ func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
 	return
 }
 
-// sortSRVs sorts SRVS recors order by Priority Desc, Weight Desc, Target Asc, Port Desc
+// sortSRVs sorts SRVS recors order by Priority Asc, Weight Desc, Target Asc, Port Desc.
 func sortSRVs(srvs []*dns.SRV) {
 	sort.Slice(srvs, func(i, j int) bool {
-		if srvs[i].Priority > srvs[j].Priority { // Desc
+		if srvs[i].Priority < srvs[j].Priority { // Asc
 			return true
 		} else if srvs[i].Priority == srvs[j].Priority {
 			if srvs[i].Weight > srvs[j].Weight { // Desc

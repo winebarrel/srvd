@@ -57,19 +57,19 @@ func TestDNSClientSortSRVs(t *testing.T) {
 	assert := assert.New(t)
 
 	srvs := []*dns.SRV{
+		&dns.SRV{Priority: 20, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.bbb.example.com.", Port: 81},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.bbb.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 110, Target: "_http._tcp.aaa.example.com.", Port: 80},
-		&dns.SRV{Priority: 20, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 	}
 
 	expect := []*dns.SRV{
-		&dns.SRV{Priority: 20, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 110, Target: "_http._tcp.aaa.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.bbb.example.com.", Port: 80},
 		&dns.SRV{Priority: 10, Weight: 100, Target: "_http._tcp.bbb.example.com.", Port: 81},
+		&dns.SRV{Priority: 20, Weight: 100, Target: "_http._tcp.aaa.example.com.", Port: 80},
 	}
 
 	sortSRVs(srvs)
