@@ -87,6 +87,8 @@ func (dnsCli *DNSClient) Dig() (srvsByDomain map[string][]*dns.SRV) {
 
 			if err != nil {
 				log.Println("WARNING: DNS lookup failed: ", err)
+			} else if r.Rcode != dns.RcodeSuccess {
+				log.Printf("WARNING: DNS Response Code is not NOERROR: RCODE=%d\n", r.Rcode)
 			} else if r != nil {
 				srvs := make([]*dns.SRV, len(r.Answer))
 
