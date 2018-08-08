@@ -1,3 +1,10 @@
+srvd (0.3.2) unstable; urgency=medium
+
+  * Set EDNS0 size.
+  * Check DNS response code.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 08 Aug 2018 18:50:20 +0900
+
 srvd (0.3.1) unstable; urgency=low
 
   * Add src/dest same check.
