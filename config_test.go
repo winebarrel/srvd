@@ -38,7 +38,7 @@ timeout = 2
 		assert.Equal(false, config.Dryrun)
 		assert.Equal(false, config.Sdnotify)
 		assert.Equal(false, config.DisableRollbackOnReloadFailure)
-		assert.Equal(4096, config.Edns0Size)
+		assert.Equal(uint16(4096), config.Edns0Size)
 	})
 }
 
@@ -79,7 +79,7 @@ edns0_size = 2048
 		assert.Equal(true, config.Dryrun)
 		assert.Equal(true, config.Sdnotify)
 		assert.Equal(true, config.DisableRollbackOnReloadFailure)
-		assert.Equal(2048, config.Edns0Size)
+		assert.Equal(uint16(2048), config.Edns0Size)
 	})
 }
 
