@@ -17,6 +17,7 @@ func TestDNSClientDig(t *testing.T) {
 	config := &Config{
 		Domains:    []string{"_mysql._tcp.winebarrel.jp"},
 		ResolvConf: "/etc/resolv.conf",
+		Edns0Size:  4096,
 	}
 
 	dnsCli, _ := NewDNSClient(config)
