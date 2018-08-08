@@ -130,7 +130,9 @@ func (tmpl *Template) update(tempPath string) (err error) {
 			return
 		}
 
-		defer os.Remove(destBak)
+		if !tmpl.Config.DisableRollbackOnReloadFailure {
+			defer os.Remove(destBak)
+		}
 	}
 
 	if tmpl.Config.Dryrun {
@@ -153,10 +155,12 @@ func (tmpl *Template) update(tempPath string) (err error) {
 		if err != nil {
 			err = fmt.Errorf("Reload command failed: %s", err)
 
-			if destBak == "" {
-				os.Remove(tmpl.Dest)
-			} else {
-				os.Rename(destBak, tmpl.Dest)
+			if !tmpl.Config.DisableRollbackOnReloadFailure {
+				if destBak == "" {
+					os.Remove(tmpl.Dest)
+				} else {
+					os.Rename(destBak, tmpl.Dest)
+				}
 			}
 
 			return

@@ -37,6 +37,7 @@ timeout = 2
 		assert.Equal(8080, config.StatusPort)
 		assert.Equal(false, config.Dryrun)
 		assert.Equal(false, config.Sdnotify)
+		assert.Equal(false, config.DisableRollbackOnReloadFailure)
 	})
 }
 
@@ -56,6 +57,7 @@ timeout = 2
 cooldown = 60
 status_port = 8081
 sdnotify = true
+disable_rollback_on_reload_failure = true
 `
 
 	testutils.TempFile(conf, func(f *os.File) {
@@ -74,6 +76,7 @@ sdnotify = true
 		assert.Equal(8081, config.StatusPort)
 		assert.Equal(true, config.Dryrun)
 		assert.Equal(true, config.Sdnotify)
+		assert.Equal(true, config.DisableRollbackOnReloadFailure)
 	})
 }
 

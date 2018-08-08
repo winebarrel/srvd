@@ -182,6 +182,30 @@ func TestTemplateUpdateReloadFailed(t *testing.T) {
 	})
 }
 
+func TestTemplateUpdateReloadFailedDisableRollback(t *testing.T) {
+	assert := assert.New(t)
+
+	tmpl := &Template{
+		CheckCmd:  &Command{Cmdline: "true", Timeout: time.Second * time.Duration(3)},
+		ReloadCmd: &Command{Cmdline: "false", Timeout: time.Second * time.Duration(3)},
+		Config:    &Config{DisableRollbackOnReloadFailure: true},
+	}
+
+	testutils.TempFile("server0.example.com.", func(dest *os.File) {
+		testutils.TempFile("server.example.com.", func(temp *os.File) {
+			tmpl.Dest = dest.Name()
+			err := tmpl.update(temp.Name())
+			assert.Equal("Reload command failed: exit status 1", err.Error())
+			bakFile := dest.Name() + ".bak"
+			defer os.Remove(bakFile)
+			buf, _ := ioutil.ReadFile(dest.Name())
+			bak, _ := ioutil.ReadFile(bakFile)
+			assert.Equal("server.example.com.", string(buf))
+			assert.Equal("server0.example.com.", string(bak))
+		})
+	})
+}
+
 func TestTemplateUpdateNoReload(t *testing.T) {
 	assert := assert.New(t)
 

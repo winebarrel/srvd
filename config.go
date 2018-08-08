@@ -9,22 +9,23 @@ import (
 
 // Config struct has the setting of srvd.
 type Config struct {
-	Src        string
-	Dest       string
-	Domains    []string
-	ResolvConf string `toml:"resolv_conf"`
-	ReloadCmd  string `toml:"reload_cmd"`
-	CheckCmd   string `toml:"check_cmd"`
-	Interval   int
-	Timeout    int
-	Cooldown   int
-	StatusPort int `toml:"status_port"`
-	Dryrun     bool
-	Noreload   bool
-	Nocheck    bool
-	Nohttpd    bool
-	Oneshot    bool
-	Sdnotify   bool
+	Src                            string
+	Dest                           string
+	Domains                        []string
+	ResolvConf                     string `toml:"resolv_conf"`
+	ReloadCmd                      string `toml:"reload_cmd"`
+	CheckCmd                       string `toml:"check_cmd"`
+	Interval                       int
+	Timeout                        int
+	Cooldown                       int
+	StatusPort                     int `toml:"status_port"`
+	Dryrun                         bool
+	Noreload                       bool
+	Nocheck                        bool
+	Nohttpd                        bool
+	Oneshot                        bool
+	Sdnotify                       bool
+	DisableRollbackOnReloadFailure bool `toml:"disable_rollback_on_reload_failure"`
 }
 
 // LoadConfig creates Config struct from the given flags.
