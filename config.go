@@ -7,6 +7,13 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+const (
+	// DefaultStatusPort is the default status_port value.
+	DefaultStatusPort = 8080
+	// DefaultEdns0Size is the default edns0_size value.
+	DefaultEdns0Size = 4096
+)
+
 // Config struct has the setting of srvd.
 type Config struct {
 	Src                            string
@@ -25,7 +32,8 @@ type Config struct {
 	Nohttpd                        bool
 	Oneshot                        bool
 	Sdnotify                       bool
-	DisableRollbackOnReloadFailure bool `toml:"disable_rollback_on_reload_failure"`
+	DisableRollbackOnReloadFailure bool   `toml:"disable_rollback_on_reload_failure"`
+	Edns0Size                      uint16 `toml:"edns0_size"`
 }
 
 // LoadConfig creates Config struct from the given flags.
@@ -85,10 +93,14 @@ func LoadConfig(flags *Flags) (config *Config, err error) {
 	}
 
 	if config.StatusPort == 0 {
-		config.StatusPort = 8080
+		config.StatusPort = DefaultStatusPort
 	} else if config.StatusPort < 0 || config.StatusPort > 65535 {
 		err = fmt.Errorf("status_port mult be '>= 0' && '<= 65535'")
 		return
+	}
+
+	if config.Edns0Size < 1 {
+		config.Edns0Size = DefaultEdns0Size
 	}
 
 	return

@@ -36,6 +36,7 @@ func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
 		msg := &dns.Msg{}
 		msg.SetQuestion(dns.Fqdn(domain), dns.TypeSRV)
 		msg.RecursionDesired = true
+		msg.SetEdns0(config.Edns0Size, true)
 		dnsCli.Messages[domain] = msg
 	}
 
