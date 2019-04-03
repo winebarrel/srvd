@@ -2,8 +2,10 @@ package tmplfuncs
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -13,15 +15,17 @@ import (
 
 func init() {
 	sigil.Register(template.FuncMap{
-		"interfaces": net.Interfaces,
-		"ifaddrs":    net.InterfaceAddrs,
-		"ifbyname":   net.InterfaceByName,
-		"hostname":   os.Hostname,
-		"ipv4byif":   ipv4ByInterface,
-		"ipv4sbyif":  ipv4sByInterface,
-		"ipv4toi":    ipv4ToI,
-		"rotatesrvs": rotateSRVs,
-		"fetchsrvs":  fetchSRVs,
+		"interfaces":  net.Interfaces,
+		"ifaddrs":     net.InterfaceAddrs,
+		"ifbyname":    net.InterfaceByName,
+		"hostname":    os.Hostname,
+		"ipv4byif":    ipv4ByInterface,
+		"ipv4sbyif":   ipv4sByInterface,
+		"ipv4toi":     ipv4ToI,
+		"rotatesrvs":  rotateSRVs,
+		"fetchsrvs":   fetchSRVs,
+		"shufflesrvs": shuffleSRVs,
+		"hextoi":      hexToI,
 	})
 }
 
@@ -94,12 +98,15 @@ func ipv4ToI(ip string) (i int) {
 }
 
 func rotateSRVs(ary []*dns.SRV, n int) []*dns.SRV {
-	if len(ary) > 0 {
-		n = n % len(ary)
-		ary = append(ary[n:], ary[0:n]...)
+	newAry := make([]*dns.SRV, len(ary))
+	copy(newAry, ary)
+
+	if len(newAry) > 0 {
+		n = n % len(newAry)
+		newAry = append(newAry[n:], newAry[0:n]...)
 	}
 
-	return ary
+	return newAry
 }
 
 func fetchSRVs(srvsByDomain map[string][]*dns.SRV, domain string) (srvs []*dns.SRV, err error) {
@@ -109,6 +116,28 @@ func fetchSRVs(srvsByDomain map[string][]*dns.SRV, domain string) (srvs []*dns.S
 	if !ok {
 		err = fmt.Errorf(`Key "%s" not found`, domain)
 	}
+
+	return
+}
+
+func shuffleSRVs(seed int64, ary []*dns.SRV) []*dns.SRV {
+	n := len(ary)
+	newAry := make([]*dns.SRV, n)
+	copy(newAry, ary)
+
+	src := rand.NewSource(seed)
+	rnd := rand.New(src)
+
+	for i := n - 1; i >= 0; i-- {
+		j := rnd.Intn(i + 1)
+		newAry[i], newAry[j] = newAry[j], newAry[i]
+	}
+
+	return newAry
+}
+
+func hexToI(hex string) (i int64, err error) {
+	i, err = strconv.ParseInt(hex, 16, 64)
 
 	return
 }
