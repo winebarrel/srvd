@@ -1,17 +1,14 @@
-SHELL    := /bin/bash
-PROGRAM  := srvd
-VERSION  := v0.3.3
-GOOS     := $(shell go env GOOS)
-GOARCH   := $(shell go env GOARCH)
-TEST_SRC := $(wildcard test_*.go) $(wildcard *_test.go) $(wildcard */*_test.go)
-SRC      := $(filter-out $(TEST_SRC),$(wildcard *.go) $(wildcard */*.go))
+SHELL     := /bin/bash
+PROGRAM   := srvd
+VERSION   := v0.3.3
+GOVERSION := 1.12.1
+GOOS      := $(shell go env GOOS)
+GOARCH    := $(shell go env GOARCH)
+TEST_SRC  := $(wildcard test_*.go) $(wildcard *_test.go) $(wildcard */*_test.go)
+SRC       := $(filter-out $(TEST_SRC),$(wildcard *.go) $(wildcard */*.go))
 
 .PHONY: all
 all: $(PROGRAM)
-
-.PHONY: dep-ensure
-dep-ensure: clean-vendor
-	dep ensure
 
 $(PROGRAM): $(SRC) test
 ifeq ($(GOOS),linux)
@@ -42,27 +39,23 @@ package: clean $(PROGRAM)
 	gzip -c pkg/$(PROGRAM) > pkg/$(PROGRAM)-$(VERSION)-$(GOOS)-$(GOARCH).gz
 	rm pkg/$(PROGRAM)
 
-.PHONY: install-dep
-install-dep:
-	go get -u github.com/golang/dep/cmd/dep
-
 .PHONY: install-golint
 install-golint:
-	go get -u golang.org/x/lint/golint
+	GO111MODULE=off go get -u golang.org/x/lint/golint
 
 .PHONY: package/linux
 package/linux:
-	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
+	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) -e GO111MODULE=on --rm golang:$(GOVERSION) \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) \
-			install-dep install-golint dep-ensure package clean-vendor
+			install-golint package clean-vendor
 
 .PHONY: deb
 deb:
-	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) --rm golang \
+	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) -e GO111MODULE=on --rm golang:$(GOVERSION) \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker clean-vendor
 
 .PHONY: deb/docker
-deb/docker: install-dep install-golint dep-ensure
+deb/docker: install-golint
 	apt-get update
 	apt-get install -y debhelper
 	dpkg-buildpackage -us -uc
