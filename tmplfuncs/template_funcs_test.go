@@ -94,6 +94,12 @@ func TestTemplateFuncsRotateSRVs(t *testing.T) {
 	assert.Equal(actual[2].Target, "1")
 	assert.Equal(actual[3].Target, "2")
 	assert.Equal(actual[4].Target, "3")
+
+	assert.Equal(ary[0].Target, "1")
+	assert.Equal(ary[1].Target, "2")
+	assert.Equal(ary[2].Target, "3")
+	assert.Equal(ary[3].Target, "4")
+	assert.Equal(ary[4].Target, "5")
 }
 
 func TestTemplateFuncsFetchSRVs(t *testing.T) {
@@ -117,13 +123,27 @@ func TestTemplateFuncShuffleSRVs(t *testing.T) {
 		&dns.SRV{Target: "5"},
 	}
 
-	actual := shuffleSRVs(3, ary)
-	assert.Equal(5, len(actual))
-	assert.Equal(actual[0].Target, "5")
-	assert.Equal(actual[1].Target, "3")
-	assert.Equal(actual[2].Target, "1")
-	assert.Equal(actual[3].Target, "2")
-	assert.Equal(actual[4].Target, "4")
+	actual1 := shuffleSRVs(3, ary)
+	assert.Equal(5, len(actual1))
+	assert.Equal(actual1[0].Target, "1")
+	assert.Equal(actual1[1].Target, "2")
+	assert.Equal(actual1[2].Target, "5")
+	assert.Equal(actual1[3].Target, "3")
+	assert.Equal(actual1[4].Target, "4")
+
+	actual2 := shuffleSRVs(4, ary)
+	assert.Equal(5, len(actual2))
+	assert.Equal(actual2[0].Target, "4")
+	assert.Equal(actual2[1].Target, "3")
+	assert.Equal(actual2[2].Target, "5")
+	assert.Equal(actual2[3].Target, "1")
+	assert.Equal(actual2[4].Target, "2")
+
+	assert.Equal(ary[0].Target, "1")
+	assert.Equal(ary[1].Target, "2")
+	assert.Equal(ary[2].Target, "3")
+	assert.Equal(ary[3].Target, "4")
+	assert.Equal(ary[4].Target, "5")
 }
 
 func TestTemplateHexToI(t *testing.T) {
