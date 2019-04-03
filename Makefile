@@ -1,6 +1,6 @@
 SHELL     := /bin/bash
 PROGRAM   := srvd
-VERSION   := v0.3.6
+VERSION   := v0.3.7
 GOVERSION := 1.12.1
 GOOS      := $(shell go env GOOS)
 GOARCH    := $(shell go env GOARCH)

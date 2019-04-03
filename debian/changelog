@@ -1,6 +1,14 @@
+srvd (0.3.7) unstable; urgency=low
+
+  * Fix shufflesrvs template function. Use builtin shuffle.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 03 Apr 2019 13:15:43 +0900
+
 srvd (0.3.6) unstable; urgency=low
 
   * Fix shufflesrvs template function. Use builtin shuffle.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 03 Apr 2019 12:46:03 +0900
 
 srvd (0.3.5) unstable; urgency=low
 
