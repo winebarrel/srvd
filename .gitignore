@@ -1,6 +1,5 @@
 /pkg/*
 !/pkg/.keep
-/vendor
 srvd.toml
 /debian/srvd.debhelper.log
 /debian/srvd.substvars
@@ -9,5 +8,3 @@ srvd.toml
 /debian/files
 /pkg/srvd*
 .DS_Store
-/Gopkg.lock
-/.vscode/

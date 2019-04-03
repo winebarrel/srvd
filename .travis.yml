@@ -1,12 +1,11 @@
 sudo: false
 language: go
 go:
-  - 1.10.3
+  - 1.12.1
+env:
+  - GO111MODULE=on
 before_install:
-  - make install-dep
   - make install-golint
-install:
-  - make dep-ensure
 script:
   - make
-  - ./pkg/srvd -version 
+  - ./pkg/srvd -version
