@@ -136,8 +136,7 @@ func shuffleSRVs(seed int64, ary []*dns.SRV) []*dns.SRV {
 	return newAry
 }
 
-func hexToI(hex string) (i int64, err error) {
-	i, err = strconv.ParseInt(hex, 16, 64)
-
+func hexToI(hex string) (i int64) {
+	i, _ = strconv.ParseInt(hex, 16, 64)
 	return
 }
