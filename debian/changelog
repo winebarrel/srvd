@@ -1,3 +1,7 @@
+srvd (0.3.6) unstable; urgency=low
+
+  * Fix shufflesrvs template function. Use builtin shuffle.
+
 srvd (0.3.5) unstable; urgency=low
 
   * Fix hextoi template function. Ignore "value out of range"
