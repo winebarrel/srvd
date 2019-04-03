@@ -1,3 +1,9 @@
+srvd (0.3.5) unstable; urgency=low
+
+  * Fix hextoi template function. Ignore "value out of range"
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 03 Apr 2019 11:59:59 +0900
+
 srvd (0.3.4) unstable; urgency=low
 
   * Add shufflesrvs/hextoi template function.
