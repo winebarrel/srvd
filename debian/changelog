@@ -1,3 +1,9 @@
+srvd (0.3.4) unstable; urgency=low
+
+  * Add shufflesrvs/hextoi template function.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Wed, 03 Apr 2019 11:28:10 +0900
+
 srvd (0.3.3) unstable; urgency=low
 
   * Fix priority sort order.
