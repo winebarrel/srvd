@@ -30,10 +30,6 @@ test: $(SRC) $(TEST_SRC) lint
 clean:
 	rm -f pkg/*
 
-.PHONY: clean-vendor
-clean-vendor:
-	rm -rf vendor
-
 .PHONY: package
 package: clean $(PROGRAM)
 	gzip -c pkg/$(PROGRAM) > pkg/$(PROGRAM)-$(VERSION)-$(GOOS)-$(GOARCH).gz
@@ -47,12 +43,12 @@ install-golint:
 package/linux:
 	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) -e GO111MODULE=on --rm golang:$(GOVERSION) \
 		make -C /go/src/github.com/winebarrel/$(PROGRAM) \
-			install-golint package clean-vendor
+			install-golint package
 
 .PHONY: deb
 deb:
 	docker run -v $(shell pwd):/go/src/github.com/winebarrel/$(PROGRAM) -e GO111MODULE=on --rm golang:$(GOVERSION) \
-		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker clean-vendor
+		make -C /go/src/github.com/winebarrel/$(PROGRAM) deb/docker
 
 .PHONY: deb/docker
 deb/docker: install-golint
