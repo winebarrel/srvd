@@ -128,8 +128,12 @@ func TestTemplateFuncShuffleSRVs(t *testing.T) {
 
 func TestTemplateHexToI(t *testing.T) {
 	assert := assert.New(t)
-	actual1 := hexToI("d5dd6bef68a7")
+
+	actual1, err1 := hexToI("d5dd6bef68a7")
 	assert.Equal(actual1, int64(235146975340711))
-	actual2 := hexToI("0fc5584c50c71643c")
+	assert.Equal(err1, nil)
+
+	actual2, err2 := hexToI("0fc5584c50c71643c")
 	assert.Equal(actual2, int64(9223372036854775807))
+	assert.Equal(err2, nil)
 }
