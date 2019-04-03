@@ -127,11 +127,7 @@ func shuffleSRVs(seed int64, ary []*dns.SRV) []*dns.SRV {
 
 	src := rand.NewSource(seed)
 	rnd := rand.New(src)
-
-	for i := n - 1; i >= 0; i-- {
-		j := rnd.Intn(i + 1)
-		newAry[i], newAry[j] = newAry[j], newAry[i]
-	}
+	rnd.Shuffle(n, func(i, j int) { newAry[i], newAry[j] = newAry[j], newAry[i] })
 
 	return newAry
 }

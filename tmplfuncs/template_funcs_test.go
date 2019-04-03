@@ -119,10 +119,10 @@ func TestTemplateFuncShuffleSRVs(t *testing.T) {
 
 	actual := shuffleSRVs(3, ary)
 	assert.Equal(5, len(actual))
-	assert.Equal(actual[0].Target, "5")
-	assert.Equal(actual[1].Target, "3")
-	assert.Equal(actual[2].Target, "1")
-	assert.Equal(actual[3].Target, "2")
+	assert.Equal(actual[0].Target, "1")
+	assert.Equal(actual[1].Target, "2")
+	assert.Equal(actual[2].Target, "5")
+	assert.Equal(actual[3].Target, "3")
 	assert.Equal(actual[4].Target, "4")
 }
 
