@@ -39,6 +39,7 @@ timeout = 2
 		assert.Equal(false, config.Sdnotify)
 		assert.Equal(false, config.DisableRollbackOnReloadFailure)
 		assert.Equal(uint16(4096), config.Edns0Size)
+		assert.Equal("", config.Net)
 	})
 }
 
@@ -60,6 +61,7 @@ status_port = 8081
 sdnotify = true
 disable_rollback_on_reload_failure = true
 edns0_size = 2048
+net = "udp"
 `
 
 	testutils.TempFile(conf, func(f *os.File) {
@@ -80,6 +82,7 @@ edns0_size = 2048
 		assert.Equal(true, config.Sdnotify)
 		assert.Equal(true, config.DisableRollbackOnReloadFailure)
 		assert.Equal(uint16(2048), config.Edns0Size)
+		assert.Equal("udp", config.Net)
 	})
 }
 

@@ -11,3 +11,6 @@ cooldown = 60
 #sdnotify = false
 #disable_rollback_on_reload_failure = false
 #edns0_size = 4096
+
+# see https://github.com/miekg/dns/blob/bc7d5a495c5de897c6dbff5ee0768b4f077552f8/client.go#L30
+#net = "udp"
