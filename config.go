@@ -34,6 +34,7 @@ type Config struct {
 	Sdnotify                       bool
 	DisableRollbackOnReloadFailure bool   `toml:"disable_rollback_on_reload_failure"`
 	Edns0Size                      uint16 `toml:"edns0_size"`
+	Net                            string
 }
 
 // LoadConfig creates Config struct from the given flags.

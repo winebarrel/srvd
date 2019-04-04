@@ -26,8 +26,10 @@ type DNSClient struct {
 // NewDNSClient creates DNSClient struct.
 func NewDNSClient(config *Config) (dnsCli *DNSClient, err error) {
 	dnsCli = &DNSClient{
-		Client: &dns.Client{},
-		Cache:  map[string]*SRVCache{},
+		Client: &dns.Client{
+			Net: config.Net,
+		},
+		Cache: map[string]*SRVCache{},
 	}
 
 	dnsCli.Messages = make(map[string]*dns.Msg, len(config.Domains))

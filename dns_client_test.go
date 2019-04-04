@@ -38,6 +38,45 @@ func TestDNSClientDig(t *testing.T) {
 	}
 }
 
+func TestDNSClientDigWithTCP(t *testing.T) {
+	assert := assert.New(t)
+
+	config := &Config{
+		Domains:    []string{"_mysql2._tcp.winebarrel.jp"},
+		ResolvConf: "/etc/resolv.conf",
+		Net:        "tcp",
+		Edns0Size:  4096,
+	}
+
+	dnsCli, _ := NewDNSClient(config)
+	srvsByDomain := dnsCli.Dig()
+	assert.Equal(1, len(srvsByDomain))
+	srvs := srvsByDomain["_mysql2._tcp.winebarrel.jp"]
+	assert.Equal(20, len(srvs))
+
+	expects := []string{
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server1\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server10\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server11\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server12\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server13\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server14\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server15\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server16\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server17\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server18\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server19\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server2\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server20\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server3\.winebarrel\.jp\.$`,
+		`^_mysql2\._tcp\.winebarrel.jp\.` + "\t\\d+\tIN\tSRV\t" + `10 10 10 server4\.winebarrel\.jp\.$`,
+	}
+
+	for i, r := range expects {
+		assert.Regexp(regexp.MustCompile(r), srvs[i].String())
+	}
+}
+
 func TestDNSClientDigNotFound(t *testing.T) {
 	assert := assert.New(t)
 
