@@ -1,3 +1,9 @@
+srvd (0.3.8) unstable; urgency=low
+
+  * Support TCP mode.
+
+ -- Genki Sugawara <sugawara@winebarrel.jp>  Thu, 04 Apr 2019 17:29:09 +0900
+
 srvd (0.3.7) unstable; urgency=low
 
   * Revert: Fix hextoi template function. Ignore "value out of range"
